@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://clelim-serrurerie.fr/sitemap.xml

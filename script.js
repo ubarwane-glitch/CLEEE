@@ -433,12 +433,7 @@ var serviceOptionsAll = {
   }
 };
 
-// ⚠️  ÉTAPE REQUISE : remplace l'URL ci-dessous par ton endpoint Formspree
-// 1. Va sur https://formspree.io  — crée un compte gratuit
-// 2. Clique "New Form", nomme-le "Clelim Serrurerie"
-// 3. Formspree donne une URL du type https://formspree.io/f/XXXXXXXX
-// 4. Colle cette URL dans la constante ci-dessous
-var FORMSPREE_ENDPOINT = 'https://formspree.io/f/VOTRE_ID_ICI';
+var FORMSPREE_ENDPOINT = window.siteConfig?.forms?.formspreeEndpoint || 'https://formspree.io/f/VOTRE_ID_ICI';
 
 // ---------- Init on DOM Ready ----------
 document.addEventListener('DOMContentLoaded', function () {
@@ -709,16 +704,33 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // -------------------------------------------------------
-  // 6. FORM SUBMISSION (Formspree)
+  // 6. FORM SUBMISSION (Production-ready)
   // -------------------------------------------------------
   var form        = document.getElementById('quote-form');
   var formSuccess = document.getElementById('form-success');
   var formError   = document.getElementById('form-error');
+  var honeypot    = document.getElementById('honeypot');
 
   if (form) {
+    var lastSubmitTime = 0;
+    var MIN_SUBMIT_INTERVAL = 3000;
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      if (!form.checkValidity()) { form.reportValidity(); return; }
+
+      var now = Date.now();
+      if (now - lastSubmitTime < MIN_SUBMIT_INTERVAL) {
+        return;
+      }
+
+      if (honeypot && honeypot.value !== '') {
+        return;
+      }
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
 
       var submitBtn = form.querySelector('.form-submit-btn');
       var lang = getCurrentLang();
@@ -727,36 +739,66 @@ document.addEventListener('DOMContentLoaded', function () {
       if (formSuccess) formSuccess.style.display = 'none';
       if (formError)   formError.style.display   = 'none';
 
-      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '⏳ Envoi en cours...'; }
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = '⏳ Envoi en cours...';
+      }
 
       var data = {
-        name:     document.getElementById('quote-name')      ? document.getElementById('quote-name').value      : '',
-        phone:    document.getElementById('quote-phone')     ? document.getElementById('quote-phone').value     : '',
-        email:    document.getElementById('quote-email')     ? document.getElementById('quote-email').value     : '',
-        category: document.getElementById('service-category')? document.getElementById('service-category').value: '',
-        service:  document.getElementById('service-detail')  ? document.getElementById('service-detail').value  : '',
-        message:  document.getElementById('quote-message')   ? document.getElementById('quote-message').value   : '',
-        _subject: 'Demande de devis - Clelim Serrurerie'
+        name:     document.getElementById('quote-name')?.value.trim() || '',
+        phone:    document.getElementById('quote-phone')?.value.trim() || '',
+        email:    document.getElementById('quote-email')?.value.trim() || '',
+        category: document.getElementById('service-category')?.value || '',
+        service:  document.getElementById('service-detail')?.value || '',
+        message:  document.getElementById('quote-message')?.value.trim() || '',
+        _subject: 'Demande de devis - Clelim Serrurerie',
+        _language: lang,
+        _timestamp: new Date().toISOString()
       };
 
-      fetch(FORMSPREE_ENDPOINT, {
+      var endpoint = FORMSPREE_ENDPOINT;
+      var timeout = setTimeout(function() {
+        if (formError) formError.style.display = 'flex';
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT';
+        }
+      }, 15000);
+
+      fetch(endpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
         body: JSON.stringify(data)
       })
       .then(function (response) {
+        clearTimeout(timeout);
         if (response.ok) {
+          lastSubmitTime = now;
           form.reset();
           if (serviceSelect) serviceSelect.disabled = true;
-          if (formSuccess) { formSuccess.style.display = 'flex'; formSuccess.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
-          if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT'; }
+          if (formSuccess) {
+            formSuccess.style.display = 'flex';
+            formSuccess.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT';
+          }
         } else {
-          throw new Error('error ' + response.status);
+          throw new Error('HTTP error ' + response.status);
         }
       })
-      .catch(function () {
+      .catch(function (error) {
+        clearTimeout(timeout);
+        console.error('Form submission error:', error);
         if (formError) formError.style.display = 'flex';
-        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT'; }
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT';
+        }
       });
     });
   }
@@ -865,7 +907,28 @@ document.addEventListener('DOMContentLoaded', function () {
   triggerAboutStats();
 
   // -------------------------------------------------------
-  // 10. AREAS HIGHLIGHT ANIMATION
+  // 10. BACK TO TOP BUTTON
+  // -------------------------------------------------------
+  var backToTopBtn = document.getElementById('backToTop');
+
+  function toggleBackToTop() {
+    if (window.scrollY > 400) {
+      backToTopBtn && backToTopBtn.classList.add('visible');
+    } else {
+      backToTopBtn && backToTopBtn.classList.remove('visible');
+    }
+  }
+
+  if (backToTopBtn) {
+    backToTopBtn.addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    window.addEventListener('scroll', toggleBackToTop);
+    toggleBackToTop();
+  }
+
+  // -------------------------------------------------------
+  // 11. AREAS HIGHLIGHT ANIMATION
   // -------------------------------------------------------
   var areaTags = document.querySelectorAll('.area-tag');
   if (areaTags.length) {
@@ -876,6 +939,20 @@ document.addEventListener('DOMContentLoaded', function () {
       areaIndex = (areaIndex + 1) % areaTags.length;
       areaTags[areaIndex].classList.add('is-highlighted');
     }, 1400);
+  }
+
+  // -------------------------------------------------------
+  // 12. LAZY LOADING IMAGES
+  // -------------------------------------------------------
+  if ('loading' in HTMLImageElement.prototype) {
+    var images = document.querySelectorAll('img[loading="lazy"]');
+    images.forEach(function(img) {
+      img.src = img.dataset.src || img.src;
+    });
+  } else {
+    var script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js';
+    document.body.appendChild(script);
   }
 
 }); // END DOMContentLoaded

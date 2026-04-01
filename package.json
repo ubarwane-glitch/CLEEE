@@ -1,13 +1,41 @@
 {
   "name": "clelim-serrurerie",
   "version": "1.0.0",
-  "description": "Site vitrine pour Clelim Serrurerie - Dépannage serrurerie 24h/24 en Île-de-France",
+  "description": "Site vitrine professionnel pour Clelim Serrurerie - Dépannage serrurerie 24h/24 en Île-de-France",
+  "type": "module",
   "scripts": {
-    "build": "echo 'Static site - no build required'",
-    "start": "echo 'Static site ready'"
+    "dev": "npx serve . -p 3000",
+    "preview": "npx serve . -p 4173",
+    "build": "node scripts/build.js",
+    "format": "npx prettier --write \"**/*.{html,css,js,json,md}\"",
+    "format:check": "npx prettier --check \"**/*.{html,css,js,json,md}\"",
+    "validate": "node scripts/validate.js"
   },
-  "keywords": ["serrurerie", "dépannage", "île-de-france"],
+  "keywords": [
+    "serrurerie",
+    "locksmith",
+    "dépannage",
+    "île-de-france",
+    "urgence",
+    "24/7",
+    "paris"
+  ],
   "author": "Clelim Serrurerie",
   "license": "UNLICENSED",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "prettier": "^3.2.5",
+    "serve": "^14.2.1"
+  },
+  "prettier": {
+    "semi": true,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "printWidth": 100,
+    "arrowParens": "avoid"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }

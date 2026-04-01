@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://clelim-serrurerie.fr/</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://clelim-serrurerie.fr/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://clelim-serrurerie.fr/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://clelim-serrurerie.fr/?lang=zh" />
+  </url>
+  <url>
+    <loc>https://clelim-serrurerie.fr/politique-confidentialite.html</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://clelim-serrurerie.fr/cgu.html</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+</urlset>
