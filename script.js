@@ -739,6 +739,13 @@ document.addEventListener('DOMContentLoaded', function () {
       if (formSuccess) formSuccess.style.display = 'none';
       if (formError)   formError.style.display   = 'none';
 
+      console.log('🔍 Form submitted - Checking dependencies...');
+      console.log('   businessConfig:', typeof businessConfig !== 'undefined' ? '✅ LOADED' : '❌ MISSING');
+      console.log('   quoteConfig:', typeof quoteConfig !== 'undefined' ? '✅ LOADED' : '❌ MISSING');
+      console.log('   generateQuoteNumber:', typeof generateQuoteNumber !== 'undefined' ? '✅ LOADED' : '❌ MISSING');
+      console.log('   generateQuotePDF:', typeof generateQuotePDF !== 'undefined' ? '✅ LOADED' : '❌ MISSING');
+      console.log('   jsPDF:', typeof window.jspdf !== 'undefined' && window.jspdf.jsPDF ? '✅ LOADED' : '❌ MISSING');
+
       if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.textContent = '⏳ Envoi en cours...';
@@ -758,6 +765,24 @@ document.addEventListener('DOMContentLoaded', function () {
       };
 
       try {
+        if (typeof generateQuoteNumber === 'undefined') {
+          throw new Error('generateQuoteNumber function not loaded');
+        }
+        if (typeof generateQuotePDF === 'undefined') {
+          throw new Error('generateQuotePDF function not loaded');
+        }
+        if (typeof businessConfig === 'undefined') {
+          throw new Error('businessConfig not loaded');
+        }
+        if (typeof quoteConfig === 'undefined') {
+          throw new Error('quoteConfig not loaded');
+        }
+        if (typeof window.jspdf === 'undefined' || !window.jspdf.jsPDF) {
+          throw new Error('jsPDF library not loaded');
+        }
+
+        console.log('✅ All dependencies loaded, generating quote...');
+
         var quoteNumber = generateQuoteNumber();
         var createdDate = new Date();
         var validityDate = new Date(createdDate);
@@ -849,21 +874,36 @@ document.addEventListener('DOMContentLoaded', function () {
           includeCGV: true
         };
 
+        console.log('📄 Generating PDF...');
+        console.log('   Quote number:', quoteNumber);
+        console.log('   Client:', clientData.name);
+        console.log('   Total:', totalTTC + ' €');
+
         var pdf = generateQuotePDF(pdfData);
+        console.log('✅ PDF generated successfully');
+
         var pdfBase64 = pdf.output('datauristring').split(',')[1];
+        console.log('✅ PDF converted to base64 (' + pdfBase64.length + ' characters)');
 
         var apiEndpoint = '/.netlify/functions/send-quote';
         if (window.location.hostname.includes('vercel')) {
           apiEndpoint = '/api/send-quote';
         }
 
+        console.log('📧 Preparing to send email...');
+        console.log('   API Endpoint:', apiEndpoint);
+        console.log('   Environment:', window.location.hostname);
+
         var timeout = setTimeout(function() {
+          console.error('⏱️ Timeout: Email sending took too long (>30s)');
           if (formError) formError.style.display = 'flex';
           if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT';
           }
         }, 30000);
+
+        console.log('📤 Sending request to:', apiEndpoint);
 
         fetch(apiEndpoint, {
           method: 'POST',
@@ -879,10 +919,20 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(function (response) {
           clearTimeout(timeout);
+          console.log('📨 Response received:', response.status, response.statusText);
+
+          if (!response.ok) {
+            console.error('❌ HTTP Error:', response.status);
+            throw new Error('HTTP Error: ' + response.status);
+          }
+
           return response.json();
         })
         .then(function(result) {
+          console.log('📊 Result:', result);
+
           if (result.success) {
+            console.log('✅ Email sent successfully!');
             lastSubmitTime = now;
             form.reset();
             if (serviceSelect) serviceSelect.disabled = true;
@@ -895,21 +945,48 @@ document.addEventListener('DOMContentLoaded', function () {
               submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT';
             }
           } else {
+            console.error('❌ Server error:', result.error);
             throw new Error(result.error || 'Erreur lors de l\'envoi');
           }
         })
         .catch(function (error) {
           clearTimeout(timeout);
-          console.error('Form submission error:', error);
-          if (formError) formError.style.display = 'flex';
+          console.error('❌ Form submission error:', error);
+          console.error('   Error name:', error.name);
+          console.error('   Error message:', error.message);
+          console.error('   Stack trace:', error.stack);
+
+          if (error.message && error.message.includes('Failed to fetch')) {
+            console.error('💡 Tip: This is normal in local development.');
+            console.error('   The serverless function only works when deployed.');
+            console.error('   PDF generation worked, but email sending requires deployment.');
+          }
+
+          if (formError) {
+            formError.style.display = 'flex';
+            var errorText = formError.querySelector('p');
+            if (errorText && error.message) {
+              errorText.textContent = 'Erreur: ' + error.message;
+            }
+          }
           if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT';
           }
         });
       } catch (error) {
-        console.error('PDF generation error:', error);
-        if (formError) formError.style.display = 'flex';
+        console.error('❌ PDF generation error:', error);
+        console.error('   Error name:', error.name);
+        console.error('   Error message:', error.message);
+        console.error('   Stack trace:', error.stack);
+
+        if (formError) {
+          formError.style.display = 'flex';
+          var errorText = formError.querySelector('p');
+          if (errorText && error.message) {
+            errorText.textContent = 'Erreur: ' + error.message;
+          }
+        }
         if (submitBtn) {
           submitBtn.disabled = false;
           submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT';

@@ -1,6 +1,6 @@
 function generateQuotePDF(quoteData) {
-  if (typeof jsPDF === 'undefined') {
-    throw new Error('jsPDF library not loaded');
+  if (typeof window.jspdf === 'undefined' || !window.jspdf.jsPDF) {
+    throw new Error('jsPDF library not loaded. Make sure the CDN script is included.');
   }
 
   const { jsPDF: PDF } = window.jspdf;

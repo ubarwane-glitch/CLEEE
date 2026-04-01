@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test PDF - CLELIM Serrurerie</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #022348;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+    }
+    .status {
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+      font-family: monospace;
+    }
+    .status.loading {
+      background: #fff9e6;
+      border-left: 4px solid #FFC801;
+    }
+    .status.success {
+      background: #e6f7e6;
+      border-left: 4px solid #4caf50;
+    }
+    .status.error {
+      background: #ffe6e6;
+      border-left: 4px solid #f44336;
+    }
+    button {
+      background: #FFC801;
+      color: #000;
+      border: none;
+      padding: 15px 30px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 10px 5px;
+    }
+    button:hover {
+      background: #e6b401;
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .console {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 20px;
+      border-radius: 5px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 20px;
+    }
+    .console-line {
+      margin: 5px 0;
+    }
+    .console-line.success { color: #4ec9b0; }
+    .console-line.error { color: #f48771; }
+    .console-line.warning { color: #dcdcaa; }
+    .console-line.info { color: #569cd6; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔒 Test Génération PDF</h1>
+    <p class="subtitle">Testez la génération de devis PDF sans formulaire</p>
+
+    <div id="status" class="status loading">
+      ⏳ Chargement des dépendances...
+    </div>
+
+    <button id="generateBtn" onclick="testPDF()" disabled>
+      📄 Générer un PDF de Test
+    </button>
+
+    <button id="downloadBtn" onclick="downloadTestPDF()" disabled>
+      💾 Générer et Télécharger le PDF
+    </button>
+
+    <div id="console" class="console">
+      <div class="console-line info">Console de débogage...</div>
+    </div>
+  </div>
+
+  <!-- Load jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- Load configurations -->
+  <script src="config/business.config.js"></script>
+  <script src="config/quote.config.js"></script>
+
+  <!-- Load utilities -->
+  <script src="utils/generateQuoteNumber.js"></script>
+  <script src="utils/generateQuotePdf.js"></script>
+
+  <script>
+    const consoleDiv = document.getElementById('console');
+    const statusDiv = document.getElementById('status');
+    const generateBtn = document.getElementById('generateBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    function log(message, type = 'info') {
+      const line = document.createElement('div');
+      line.className = `console-line ${type}`;
+      line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      consoleDiv.appendChild(line);
+      consoleDiv.scrollTop = consoleDiv.scrollHeight;
+      console.log(message);
+    }
+
+    function checkDependencies() {
+      log('🔍 Vérification des dépendances...', 'info');
+
+      const checks = {
+        'jsPDF': typeof window.jspdf !== 'undefined' && window.jspdf.jsPDF,
+        'businessConfig': typeof businessConfig !== 'undefined',
+        'quoteConfig': typeof quoteConfig !== 'undefined',
+        'generateQuoteNumber': typeof generateQuoteNumber !== 'undefined',
+        'generateQuotePDF': typeof generateQuotePDF !== 'undefined'
+      };
+
+      let allLoaded = true;
+
+      for (const [name, loaded] of Object.entries(checks)) {
+        if (loaded) {
+          log(`  ✅ ${name}: LOADED`, 'success');
+        } else {
+          log(`  ❌ ${name}: MISSING`, 'error');
+          allLoaded = false;
+        }
+      }
+
+      if (allLoaded) {
+        log('✅ Toutes les dépendances sont chargées!', 'success');
+        statusDiv.className = 'status success';
+        statusDiv.textContent = '✅ Prêt! Toutes les dépendances sont chargées.';
+        generateBtn.disabled = false;
+        downloadBtn.disabled = false;
+      } else {
+        log('❌ Certaines dépendances sont manquantes', 'error');
+        statusDiv.className = 'status error';
+        statusDiv.textContent = '❌ Erreur: Certaines dépendances ne sont pas chargées. Consultez la console.';
+      }
+
+      return allLoaded;
+    }
+
+    function getTestData() {
+      const quoteNumber = generateQuoteNumber();
+      const createdDate = new Date();
+      const validityDate = new Date(createdDate);
+      validityDate.setDate(validityDate.getDate() + 30);
+
+      const formatDate = (date) => {
+        const d = date.getDate().toString().padStart(2, '0');
+        const m = (date.getMonth() + 1).toString().padStart(2, '0');
+        const y = date.getFullYear();
+        return `${d}/${m}/${y}`;
+      };
+
+      return {
+        business: {
+          ...businessConfig.company,
+          certificationMention: businessConfig.legal?.certificationMention || '',
+          cgv: businessConfig.cgv || []
+        },
+        client: {
+          name: 'Jean Test',
+          email: 'test@example.com',
+          phone: '06 12 34 56 78',
+          address: '123 Rue de Test',
+          postalCode: '75001',
+          city: 'Paris'
+        },
+        quote: {
+          number: quoteNumber,
+          description: 'Ouverture de porte claquée',
+          createdDate: formatDate(createdDate),
+          validityDate: formatDate(validityDate),
+          totalHT: 100.00,
+          totalTVA: 0,
+          totalTTC: 100.00,
+          notes: businessConfig.quote.notes
+        },
+        lineItems: [
+          {
+            description: 'Déplacement sur site',
+            quantity: 1,
+            unitPrice: 0,
+            total: 0
+          },
+          {
+            description: 'Ouverture de porte claquée',
+            quantity: 1,
+            unitPrice: 100.00,
+            total: 100.00
+          }
+        ],
+        includeCGV: true
+      };
+    }
+
+    function testPDF() {
+      try {
+        log('📄 Début de la génération du PDF...', 'info');
+
+        const testData = getTestData();
+        log(`   Devis N°: ${testData.quote.number}`, 'info');
+        log(`   Client: ${testData.client.name}`, 'info');
+        log(`   Total: ${testData.quote.totalTTC} €`, 'info');
+
+        const pdf = generateQuotePDF(testData);
+        log('✅ PDF généré avec succès!', 'success');
+
+        const pdfBase64 = pdf.output('datauristring').split(',')[1];
+        log(`✅ PDF converti en base64 (${pdfBase64.length} caractères)`, 'success');
+
+        statusDiv.className = 'status success';
+        statusDiv.innerHTML = `
+          ✅ <strong>Succès!</strong><br>
+          Devis ${testData.quote.number} généré avec succès.<br>
+          Cliquez sur "Générer et Télécharger" pour obtenir le PDF.
+        `;
+
+      } catch (error) {
+        log(`❌ Erreur: ${error.message}`, 'error');
+        log(`   Stack: ${error.stack}`, 'error');
+
+        statusDiv.className = 'status error';
+        statusDiv.innerHTML = `❌ <strong>Erreur:</strong> ${error.message}`;
+      }
+    }
+
+    function downloadTestPDF() {
+      try {
+        log('💾 Génération et téléchargement du PDF...', 'info');
+
+        const testData = getTestData();
+        const pdf = generateQuotePDF(testData);
+
+        const filename = `${testData.quote.number}.pdf`;
+        pdf.save(filename);
+
+        log(`✅ PDF téléchargé: ${filename}`, 'success');
+
+        statusDiv.className = 'status success';
+        statusDiv.innerHTML = `✅ <strong>Téléchargement réussi!</strong><br>Le fichier ${filename} a été téléchargé.`;
+
+      } catch (error) {
+        log(`❌ Erreur: ${error.message}`, 'error');
+
+        statusDiv.className = 'status error';
+        statusDiv.innerHTML = `❌ <strong>Erreur:</strong> ${error.message}`;
+      }
+    }
+
+    // Check dependencies when page loads
+    window.addEventListener('load', function() {
+      setTimeout(() => {
+        checkDependencies();
+      }, 500);
+    });
+  </script>
+</body>
+</html>
