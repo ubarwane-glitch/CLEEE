@@ -1,0 +1,1011 @@
+/* =========================================================
+   CLELIM SERRURERIE — Mobile Styles
+   Target: max-width 768px
+   Strategy: Media-query override only. Desktop untouched.
+   =========================================================
+   Sections:
+   1.  Global / Body
+   2.  Header & Nav
+   3.  Hero (#emergency)
+   4.  Service Area Banner (#areas)
+   5.  About Section (#about)
+   6.  Services Section (#services)
+   7.  Services CTA
+   8.  Urgency Banner
+   9.  Process Section
+   10. Reviews Section
+   11. Quote Section (#quote)
+   12. FAQ Section (#faq)
+   13. Footer
+   14. Floating Action Buttons (FAB)
+   ========================================================= */
+
+
+/* ==========================================================
+   1. GLOBAL / BODY
+   ========================================================== */
+@media (max-width: 768px) {
+  body {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Tighten section vertical rhythm globally */
+  section {
+    overflow-x: hidden;
+  }
+}
+
+
+/* ==========================================================
+   2. HEADER & NAV
+   ========================================================== */
+@media (max-width: 768px) {
+  #main-header {
+    /* Slimmer header on mobile */
+    box-shadow: 0 2px 12px rgba(2, 35, 72, 0.07);
+  }
+
+  nav {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65rem 1rem;
+    gap: 0.6rem;
+  }
+
+  .nav-logo {
+    flex-shrink: 0;
+  }
+
+  .nav-logo img {
+    height: 40px;
+  }
+
+  /* Nav actions: lang switcher compact (icon only) */
+  .lang-switcher {
+    display: flex;
+  }
+
+  /* Compact lang toggle: show only current lang text + icon, hide chevron */
+  .lang-toggle {
+    padding: 0 0.55rem !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    gap: 0.3rem !important;
+    border-radius: 999px !important;
+    font-size: 0.78rem !important;
+    min-width: 0 !important;
+  }
+
+  .lang-toggle .pill-chevron {
+    display: none !important;
+  }
+
+  .lang-toggle .pill-icon-circle {
+    width: 22px !important;
+    height: 22px !important;
+    min-width: 22px !important;
+  }
+
+  .lang-toggle .pill-icon-circle .material-symbols-outlined {
+    font-size: 1rem !important;
+  }
+
+  .nav-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.4rem;
+    width: auto;
+    flex-wrap: nowrap;
+    flex-shrink: 1;
+    min-width: 0;
+  }
+
+  /* WhatsApp button: icon-only square */
+  .nav-whatsapp {
+    width: 44px !important;
+    min-width: 44px !important;
+    max-width: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    padding: 0 !important;
+    border-radius: 999px !important;
+    background: #25D366 !important;
+    border: none !important;
+    box-shadow: 0 4px 14px rgba(37, 211, 102, 0.28) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 44px;
+  }
+
+  .nav-whatsapp span:last-child {
+    display: none !important;
+  }
+
+  .nav-whatsapp .pill-icon-whatsapp {
+    background: transparent;
+    width: auto;
+    height: auto;
+  }
+
+  .nav-whatsapp .pill-icon-whatsapp img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+  }
+
+  /* Call button: compact with number */
+  .nav-call-btn {
+    min-width: 0;
+    height: 44px !important;
+    min-height: 44px !important;
+    padding: 0 0.9rem !important;
+    border-radius: 999px !important;
+    gap: 0.5rem !important;
+    white-space: nowrap;
+    font-size: 0.82rem !important;
+  }
+
+  .nav-call-btn .pill-icon-phone {
+    width: 26px !important;
+    height: 26px !important;
+  }
+
+  .nav-call-btn span:last-child {
+    display: inline !important;
+    font-size: 0.82rem !important;
+    font-weight: 800;
+  }
+}
+
+
+/* ==========================================================
+   3. HERO (#emergency)
+   ========================================================== */
+@media (max-width: 768px) {
+  #emergency {
+    min-height: 70.5vh;
+    display: flex;
+    align-items: center;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .hero-inner {
+    width: 100%;
+    display: block;
+    padding: 1.2rem 1rem 1rem;
+    text-align: center;
+  }
+
+  .hero-inner > div:first-child {
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+
+  .hero-card-wrapper {
+    display: none !important;
+  }
+
+.hero-badge {
+  display: inline-flex;
+  justify-content: center;
+  padding: 0.25rem 0.6rem;
+  gap: 0.35rem;
+  margin-bottom: 1.5rem;
+  border-radius: 999px;
+}
+
+  .hero-badge-dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  .hero-badge span {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+  }
+
+.hero-title {
+  font-size: clamp(3rem, 14vw, 4rem);
+  line-height: 0.88;
+  margin: 0.2rem 0 0.1rem;
+  text-align: center;
+}
+
+  .hero-subtitle {
+    font-size: clamp(1.4rem, 6.5vw, 2rem);
+    line-height: 0.9;
+    text-align: center;
+  }
+
+.hero-desc {
+  max-width: 360px;
+  margin: 1.6rem auto 0;
+  font-family: var(--font-body) !important;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: 0 !important;
+  text-align: center;
+  text-transform: none !important;
+}
+
+.hero-desc span {
+  white-space: nowrap;
+}
+
+.hero-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.65rem;
+  width: 100%;
+  margin-top: 3rem;
+}
+
+  .hero-cta .nav-call-btn.pill-big {
+    width: 100% !important;
+    min-width: 100% !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    padding: 0 1.1rem !important;
+    border-radius: 999px !important;
+    font-size: 0.95rem !important;
+    justify-content: center !important;
+    gap: 0.6rem !important;
+  }
+
+  .hero-cta .nav-call-btn.pill-big .pill-icon-phone {
+    width: 30px !important;
+    height: 30px !important;
+  }
+
+  .hero-quote-btn {
+    width: 100% !important;
+    min-width: 100% !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    padding: 0 1rem !important;
+    border-radius: 999px !important;
+    font-size: 0.88rem !important;
+    font-weight: 700;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+  }
+
+  .hero-inner > div:first-child > div[style] {
+    margin-top: 0 !important;
+  }
+
+
+
+}
+
+
+/* ==========================================================
+   4. SERVICE AREA BANNER (#areas)
+   ========================================================== */
+@media (max-width: 768px) {
+  #areas {
+    padding: 1.2rem 0;
+    background: #fff;
+    border-bottom: 1px solid rgba(2, 35, 72, 0.07);
+  }
+
+  .areas-inner {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0 1rem;
+  }
+
+  .areas-heading {
+    font-size: 1.1rem;
+    white-space: normal;
+    text-align: center;
+    letter-spacing: 0;
+  }
+
+  .areas-tags {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.45rem;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .area-tag {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0.4rem;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(2, 35, 72, 0.05);
+  }
+
+  /* Show only the department number on mobile */
+  .area-tag .area-label {
+    display: none;
+  }
+}
+
+
+/* ==========================================================
+   5. ABOUT SECTION (#about)
+   ========================================================== */
+@media (max-width: 768px) {
+  #about {
+    padding: 1.8rem 0 1.6rem;
+  }
+
+  .about-inner {
+    padding: 0 1rem;
+  }
+
+  .about-top {
+    margin-bottom: 1.2rem;
+  }
+
+  .about-kicker {
+    font-size: 0.72rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .about-title {
+    font-size: 1.5rem;
+    max-width: none;
+    line-height: 1.05;
+    margin-bottom: 0.7rem;
+  }
+
+  .about-desc {
+    font-size: 0.88rem;
+    line-height: 1.55;
+  }
+
+  /* Stats: 3-column horizontal mini-strip on mobile */
+  .about-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+    margin-top: 1rem;
+  }
+
+  .about-stat-card {
+    border-radius: 1rem;
+    padding: 0.85rem 0.75rem;
+    text-align: center;
+  }
+
+  .about-stat-value {
+    font-size: clamp(1.6rem, 6vw, 2.2rem);
+    justify-content: center;
+    margin-bottom: 0.3rem;
+  }
+
+  .about-stat-value span:last-child {
+    font-size: 0.85rem;
+  }
+
+  .about-stat-label {
+    font-size: 0.74rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: rgba(2, 35, 72, 0.65);
+  }
+}
+
+
+/* ==========================================================
+   6. SERVICES SECTION (#services)
+   ========================================================== */
+@media (max-width: 768px) {
+  #services {
+    padding: 1.5rem 0 1.2rem;
+  }
+
+  .services-inner {
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+
+  .emergency-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .emergency-card {
+    max-width: 100%;
+    width: 100%;
+    min-height: auto;
+    padding: 1.2rem 1.1rem 1rem;
+    border-radius: 1.25rem;
+  }
+
+  /* Featured card: slightly more prominent */
+  .emergency-card-featured {
+    max-width: 100%;
+    padding: 1.35rem 1.15rem 1.15rem;
+  }
+
+  .emergency-card-top {
+    margin-bottom: 0.75rem;
+  }
+
+  .emergency-card-icon .material-symbols-outlined {
+    font-size: 1.6rem;
+  }
+
+  .emergency-card-title {
+    font-size: 1.4rem;
+    margin-bottom: 0.8rem;
+    max-width: none;
+  }
+
+  .emergency-card-list {
+    gap: 0.55rem;
+  }
+
+  .emergency-card-list li span:last-child {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .emergency-card-price-row {
+    padding-top: 1rem;
+    gap: 0.4rem;
+  }
+
+  .emergency-card-price {
+    font-size: 2.4rem;
+  }
+
+  .emergency-card-price-note,
+  .emergency-card-price-prefix {
+    font-size: 0.85rem;
+  }
+
+  /* Remove hover lift on touch devices */
+  .emergency-card:hover {
+    transform: none;
+  }
+}
+
+
+/* ==========================================================
+   7. SERVICES CTA
+   ========================================================== */
+@media (max-width: 768px) {
+  .services-cta {
+    margin-top: 0.9rem;
+    padding: 0 1rem;
+  }
+
+  .services-cta .pill-big {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    padding: 0 1.2rem !important;
+    border-radius: 999px !important;
+    font-size: 0.95rem !important;
+    justify-content: center !important;
+    gap: 0.6rem !important;
+  }
+
+  .services-cta .pill-big .pill-icon-phone {
+    width: 30px !important;
+    height: 30px !important;
+  }
+}
+
+
+/* ==========================================================
+   8. URGENCY BANNER
+   ========================================================== */
+@media (max-width: 768px) {
+  .urgency-banner {
+    padding: 1.5rem 0;
+    margin-top: 1.8rem;
+    margin-bottom: 0;
+  }
+
+  .urgency-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    padding: 0 1rem;
+  }
+
+  .urgency-left {
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .urgency-icon-wrap {
+    padding: 0.55rem;
+    border-radius: 0.8rem;
+    flex-shrink: 0;
+  }
+
+  .urgency-shield {
+    font-size: 22px !important;
+  }
+
+  .urgency-title {
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  .urgency-sub {
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+    margin-top: 0.2rem;
+  }
+
+  /* CTA hidden on mobile — FAB handles the call action */
+  .urgency-cta-wrap {
+    display: none;
+  }
+
+  /* Background scrolling text — scale down */
+  .banner-scroll-word {
+    font-size: 5.5rem;
+    margin-right: 2.5rem;
+  }
+}
+
+
+
+/* ==========================================================
+   9. PROCESS SECTION
+   ========================================================== */
+@media (max-width: 768px) {
+  .process-section {
+    padding: 1.8rem 0 2rem;
+  }
+
+  .process-inner {
+    padding: 0 1rem;
+  }
+
+  .process-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin-bottom: 1.2rem;
+  }
+
+  /* Hide WhatsApp button in process header — FAB covers this */
+  .process-call-btn {
+    display: none;
+  }
+
+  .process-title {
+    font-size: 1.5rem;
+    line-height: 1;
+    white-space: normal;
+  }
+
+  .process-desc {
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    line-height: 1.45;
+  }
+
+  .steps-grid {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+
+  .step {
+    border-radius: 1.2rem;
+    padding: 1rem 1rem 1rem;
+  }
+
+  /* Make steps horizontal: number left, content right */
+  .step {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0 1rem;
+    align-items: start;
+  }
+
+  .step-number {
+    position: static;
+    font-size: 3rem;
+    line-height: 0.9;
+    letter-spacing: -0.06em;
+    color: rgba(2, 35, 72, 0.08);
+    padding-top: 0;
+    align-self: start;
+    white-space: nowrap;
+  }
+
+  .step-content {
+    padding-top: 0;
+    align-self: center;
+  }
+
+  .step-title {
+    font-size: 0.92rem;
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.02em;
+  }
+
+  .step-desc {
+    font-size: 0.84rem;
+    line-height: 1.45;
+  }
+
+  /* Remove hover lift on touch */
+  .step:hover {
+    transform: none;
+    border-color: rgba(2, 35, 72, 0.08);
+    box-shadow: none;
+  }
+}
+
+
+/* ==========================================================
+   10. REVIEWS SECTION
+   ========================================================== */
+@media (max-width: 768px) {
+  .reviews-section {
+    padding: 1.8rem 0 2rem;
+  }
+
+  .reviews-inner {
+    padding: 0 1rem;
+  }
+
+  .reviews-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.65rem;
+    margin-bottom: 1rem;
+  }
+
+  .reviews-title {
+    font-size: 1.375rem;
+    line-height: 1;
+  }
+
+  .reviews-rating-row {
+    gap: 0.5rem;
+    margin-top: 0.3rem;
+  }
+
+  .stars .material-symbols-outlined {
+    font-size: 0.95rem;
+  }
+
+  .reviews-stats {
+    font-size: 0.72rem;
+  }
+
+  .reviews-controls {
+    gap: 0.6rem;
+    flex-wrap: nowrap;
+  }
+
+  /* Google badge — slimmer */
+  .google-badge {
+    min-height: 38px;
+    padding: 0 0.75rem;
+    gap: 0.4rem;
+  }
+
+  .google-badge img {
+    width: 16px;
+  }
+
+  .google-badge span {
+    font-size: 0.82rem;
+  }
+
+  /* Nav buttons — slightly larger tap area */
+  .review-nav-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Cards: sizing handled by JS, only override padding/radius on mobile */
+  .review-card {
+    min-height: auto;
+    padding: 1rem;
+    border-radius: 1.1rem;
+  }
+
+  .review-google-top {
+    margin-bottom: 0.75rem;
+  }
+
+  .review-avatar {
+    width: 44px;
+    height: 44px;
+    font-size: 0.88rem;
+  }
+
+  .review-name {
+    font-size: 0.95rem;
+  }
+
+  .review-meta {
+    font-size: 0.76rem;
+  }
+
+  .review-text {
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  /* Remove card hover on touch */
+  .review-card:hover {
+    transform: none;
+    border-color: rgba(2, 35, 72, 0.08);
+    box-shadow: none;
+  }
+}
+
+
+/* ==========================================================
+   11. QUOTE SECTION (#quote)
+   ========================================================== */
+/* ==========================================================
+   11. QUOTE SECTION (#quote)
+   ========================================================== */
+@media (max-width: 768px) {
+  #quote {
+    padding: 1.8rem 0 2rem;
+  }
+
+  .quote-inner {
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  /* Important : on "aplatit" le wrapper gauche seulement en mobile */
+  .quote-left {
+    display: contents;
+  }
+
+  /* Ordre mobile */
+  .quote-kicker {
+    order: 1;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+  }
+
+  .quote-left-title {
+    order: 2;
+    font-size: 1.375rem !important;
+    margin: 0 0 0.2rem;
+  }
+
+  .quote-form-wrap {
+    order: 3;
+    border-radius: 1.25rem;
+    padding: 1.2rem 1rem 1.1rem;
+  }
+
+  .quote-side-card {
+    order: 4;
+    border-radius: 1.25rem;
+    padding: 1.2rem 1rem;
+    gap: 1rem;
+  }
+
+  .quote-side-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 1.1rem;
+  }
+
+  .quote-side-icon img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .quote-side-title {
+    font-size: 1.1rem !important;
+    line-height: 1;
+  }
+
+  .quote-side-text {
+    font-size: 0.85rem;
+    line-height: 1.55;
+  }
+
+  .quote-side-btn {
+    min-height: 52px;
+    font-size: 0.88rem;
+    border-radius: 999px;
+    padding: 0 1rem;
+  }
+
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .form-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    font-size: 1rem;
+    padding: 0.55rem 0 0.65rem;
+  }
+
+  .form-textarea {
+    min-height: 100px;
+  }
+
+  .form-submit-btn {
+    min-height: 56px;
+    font-size: 0.95rem;
+    border-radius: 999px;
+    margin-top: 0.75rem;
+  }
+
+  .quote-form .form-grid-2:nth-of-type(2) .form-group:last-child {
+    transform: none;
+  }
+}
+
+
+/* ==========================================================
+   12. FAQ SECTION (#faq)
+   ========================================================== */
+@media (max-width: 768px) {
+  #faq {
+    padding: 1.8rem 0 2rem;
+  }
+
+  .faq-wrap {
+    padding: 0 1rem;
+    gap: 0;
+    grid-template-columns: 1fr;
+  }
+
+  /* Hide the right side card — focus on questions only */
+  .faq-right {
+    display: none !important;
+  }
+
+  .faq-title {
+    font-size: 1.375rem;
+    margin-bottom: 1.1rem;
+    line-height: 1;
+  }
+
+  .faq-list {
+    gap: 0.75rem;
+  }
+
+  .faq-item {
+    border-radius: 1.1rem;
+  }
+
+  /* Larger tap area for FAQ questions */
+  .faq-question {
+    min-height: 56px;
+    padding: 1rem 1.1rem;
+    font-size: 0.93rem;
+    gap: 0.75rem;
+  }
+
+  .faq-icon {
+    font-size: 1.15rem !important;
+    flex-shrink: 0;
+  }
+
+  .faq-answer {
+    font-size: 0.87rem;
+    line-height: 1.6;
+    padding: 0 1.1rem;
+  }
+
+  .faq-item.active .faq-answer {
+    padding: 0 1.1rem 1rem;
+  }
+  /* Add a mobile CTA below FAQ questions */
+  .faq-left::after {
+    content: "";
+    display: block;
+    margin-top: 1.4rem;
+  }
+
+  /* Remove hover lift on touch */
+  .faq-item:hover {
+    transform: none;
+    border-color: rgba(2, 35, 72, 0.08);
+    box-shadow: none;
+  }
+}
+
+
+/* ==========================================================
+   13. FOOTER (MOBILE ADJUST)
+   ========================================================== */
+@media (max-width: 768px) {
+
+  /* ❌ Supprimer les boutons */
+  .footer-actions {
+    display: none !important;
+  }
+
+  /* 🔥 Agrandir le logo */
+  .footer-logo {
+    height: 64px !important; /* avant 44px */
+  }
+
+  /* Optionnel : recentrer encore plus propre */
+  .footer-brand {
+    justify-content: center;
+  }
+
+  .footer-brand-wrap {
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+
+/* ==========================================================
+   14. FLOATING ACTION BUTTONS (FAB)
+   ========================================================== */
+@media (max-width: 768px) {
+  .fab-container {
+    right: 0.9rem;
+    bottom: 0.9rem;
+    gap: 0.65rem;
+  }
+
+  /* Slightly larger for thumb friendliness */
+  .fab {
+    width: 58px;
+    height: 58px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+  }
+
+  .fab-call {
+    box-shadow:
+      0 10px 24px rgba(255, 200, 1, 0.30),
+      0 4px 12px rgba(0, 0, 0, 0.10);
+  }
+
+  .fab-call .material-symbols-outlined {
+    font-size: 1.4rem;
+  }
+
+  .fab-wa img {
+    width: 26px;
+    height: 26px;
+  }
+
+  /* Remove hover lift — use active state instead */
+  .fab:hover {
+    transform: none;
+  }
+
+  .fab:active {
+    transform: scale(0.95);
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "clelim-serrurerie",
+  "version": "1.0.0",
+  "description": "Site vitrine pour Clelim Serrurerie - Dépannage serrurerie 24h/24 en Île-de-France",
+  "scripts": {
+    "build": "echo 'Static site - no build required'",
+    "start": "echo 'Static site ready'"
+  },
+  "keywords": ["serrurerie", "dépannage", "île-de-france"],
+  "author": "Clelim Serrurerie",
+  "license": "UNLICENSED",
+  "private": true
+}

@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CLELIM SERRURERIE | Île-de-France</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,800;1,900&display=swap" rel="stylesheet" />
+
+  <!-- Site Styles -->
+  <link rel="stylesheet" href="style.css" />
+  <!-- Mobile Styles (max-width: 768px) -->
+  <link rel="stylesheet" href="mobile.css" />
+</head>
+<body>
+
+  <!-- ===================== HEADER ===================== -->
+  <header id="main-header">
+    <nav>
+      <a href="#emergency" class="nav-logo" aria-label="Accueil">
+        <img src="public/logo.png" alt="Clelim Serrurerie" />
+      </a>
+
+      <div class="nav-actions">
+        <!-- Language Switcher -->
+        <div class="lang-switcher">
+          <button class="lang-toggle pill-action pill-action-light" aria-label="Changer la langue">
+            <span class="pill-icon-circle pill-icon-outline">
+              <span class="material-symbols-outlined">language</span>
+            </span>
+            <span id="current-lang">FR</span>
+            <span class="material-symbols-outlined pill-chevron">expand_more</span>
+          </button>
+
+          <div class="lang-dropdown">
+            <button class="lang-btn" data-lang="fr">Français</button>
+            <button class="lang-btn" data-lang="en">English</button>
+            <button class="lang-btn" data-lang="zh">中文</button>
+          </div>
+        </div>
+
+        <a href="https://wa.me/33677235839" class="pill-action pill-action-light nav-whatsapp">
+          <span class="pill-icon-circle pill-icon-whatsapp">
+            <img src="public/whatsapp.png" alt="WhatsApp">
+          </span>
+          <span>WhatsApp</span>
+        </a>
+
+        <a href="tel:+33677235839" class="pill-action pill-action-gold nav-call-btn halo-effect">
+          <span class="pill-icon-circle pill-icon-phone">
+            <span class="material-symbols-outlined fill-icon">call</span>
+          </span>
+          <span>06 77 23 58 39</span>
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ===================== HERO ===================== -->
+    <section id="emergency">
+      <div class="hero-bg"></div>
+
+      <div class="hero-inner">
+        <!-- Left: Text -->
+        <div>
+          <div class="hero-badge">
+            <span class="hero-badge-dot"></span>
+            <span data-i18n="hero_badge">Disponible </span>
+          </div>
+
+          <div style="margin-top:2rem">
+            <h1 class="hero-title font-headline" data-i18n="hero_title">Dépannage<br/>Serrurerie</h1>
+            <div class="hero-subtitle font-headline" data-i18n="hero_subtitle">24h/24 — 7j/7</div>
+          </div>
+
+          <p class="hero-desc" data-i18n="hero_desc" style="margin-top:1.5rem">
+            Intervention rapide dans <span>toute l'île-de-france</span><br/>
+            pour toutes vos urgences de serrurerie.
+          </p>
+
+          <div class="hero-cta">
+            <a href="tel:+33677235839" class="pill-action pill-action-gold nav-call-btn pill-big halo-effect">
+              <span class="pill-icon-circle pill-icon-phone">
+                <span class="material-symbols-outlined fill-icon">call</span>
+              </span>
+              <span>06 77 23 58 39</span>
+            </a>
+
+            <a href="#quote" class="hero-quote-btn" data-i18n="hero_cta_quote">
+              Devis Gratuit
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: Card -->
+<div class="hero-card-wrapper">
+<div class="hero-rating-badge">
+  <div class="rating-num">4.8/5</div>
+
+  <div class="rating-label">
+  <div class="google-pill">
+    <img src="public/google.png" alt="Google" />
+    <span>GOOGLE</span>
+  </div>
+</div>
+</div>
+
+  <div class="hero-card">
+    <div class="hero-card-head">
+      <h3 class="hero-card-title font-headline" data-i18n="hero_card_title">INTERVENTIONS RÉCENTES</h3>
+    </div>
+
+    <div class="hero-interventions-list">
+  <div class="intervention-item hero-intervention-row" id="hero-row-1">
+    <div class="intervention-icon">
+      <span class="material-symbols-outlined fill-icon">location_on</span>
+    </div>
+    <div>
+      <div class="intervention-title" id="hero-row-1-title">Paris 16e - Ouverture</div>
+      <div class="intervention-time" id="hero-row-1-time">Terminé il y a 14 min</div>
+    </div>
+  </div>
+
+  <div class="intervention-item hero-intervention-row" id="hero-row-2">
+    <div class="intervention-icon">
+      <span class="material-symbols-outlined fill-icon">location_on</span>
+    </div>
+    <div>
+      <div class="intervention-title" id="hero-row-2-title">Boulogne - Serrure</div>
+      <div class="intervention-time" id="hero-row-2-time">Terminé il y a 45 min</div>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+    </section>
+
+    <!-- ===================== SERVICE AREA BANNER ===================== -->
+    <section id="areas">
+      <div class="areas-inner">
+        <h2 class="areas-heading" data-i18n="areas_heading">Zones d’intervention</h2>
+        <div class="areas-tags">
+          <span class="area-tag"><span class="area-num">75</span><span class="area-label"> Paris</span></span>
+          <span class="area-tag"><span class="area-num">77</span><span class="area-label"> Seine-et-Marne</span></span>
+          <span class="area-tag"><span class="area-num">78</span><span class="area-label"> Yvelines</span></span>
+          <span class="area-tag"><span class="area-num">91</span><span class="area-label"> Essonne</span></span>
+          <span class="area-tag"><span class="area-num">92</span><span class="area-label"> Hauts-de-Seine</span></span>
+          <span class="area-tag"><span class="area-num">93</span><span class="area-label"> Seine-Saint-Denis</span></span>
+          <span class="area-tag"><span class="area-num">94</span><span class="area-label"> Val-de-Marne</span></span>
+          <span class="area-tag"><span class="area-num">95</span><span class="area-label"> Val-d'Oise</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== ABOUT ===================== -->
+<section id="about">
+  <div class="about-inner">
+    <div class="about-top">
+      <span class="about-kicker" data-i18n="about_kicker">À PROPOS</span>
+
+      <h2 class="about-title" data-i18n="about_title">
+        L’expertise au service de votre sécurité
+      </h2>
+
+      <p class="about-desc" data-i18n="about_desc">
+        Intervention rapide, transparence tarifaire et savoir-faire terrain pour toutes vos urgences de serrurerie en Île-de-France.
+      </p>
+    </div>
+
+    <div class="about-stats">
+      <article class="about-stat-card">
+        <div class="about-stat-value">
+          <span class="count-up" data-target="35">0</span><span>min</span>
+        </div>
+        <p class="about-stat-label" data-i18n="about_stat1_label">Temps moyen d’intervention</p>
+      </article>
+
+      <article class="about-stat-card">
+        <div class="about-stat-value">
+          <span class="count-up" data-target="3">0</span><span>+</span>
+        </div>
+        <p class="about-stat-label" data-i18n="about_stat2_label">Années d’expérience</p>
+      </article>
+
+      <article class="about-stat-card">
+        <div class="about-stat-value">
+          <span class="count-up" data-target="98">0</span><span>%</span>
+        </div>
+        <p class="about-stat-label" data-i18n="about_stat3_label">Clients satisfaits</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+    <!-- ===================== SERVICES ===================== -->
+    <section id="services">
+      <div class="services-inner">
+
+        <div class="services-grid emergency-cards-grid">
+
+          <!-- LEFT -->
+          <article class="emergency-card emergency-card-light">
+            <div class="emergency-card-top">
+              <div class="emergency-card-icon">
+                <span class="material-symbols-outlined fill-icon">lock</span>
+              </div>
+            </div>
+
+            <h3 class="emergency-card-title" data-i18n="svc1_title">
+              OUVERTURE PORTE<br />VÉROUILLÉE
+            </h3>
+
+            <ul class="emergency-card-list">
+              <li>
+                <span class="material-symbols-outlined">check</span>
+                <span data-i18n="svc1_item1">Technique non destructive priorisée</span>
+              </li>
+              <li>
+                <span class="material-symbols-outlined">check</span>
+                <span data-i18n="svc1_item2">Disponibilité 24h/24</span>
+              </li>
+            </ul>
+
+            <div class="emergency-card-price-row">
+              <span class="emergency-card-price">220€</span>
+              <span class="emergency-card-price-note" data-i18n="svc_ttc">HT</span>
+            </div>
+          </article>
+
+          <!-- CENTER -->
+          <article class="emergency-card emergency-card-featured">
+            <div class="emergency-card-top">
+              <div class="emergency-card-icon">
+                <span class="material-symbols-outlined fill-icon">door_front</span>
+              </div>
+            </div>
+
+            <h3 class="emergency-card-title" data-i18n="svc2_title">
+              OUVERTURE DE PORTE<br />CLAQUÉE
+            </h3>
+
+            <ul class="emergency-card-list">
+              <li>
+                <span class="material-symbols-outlined">check</span>
+                <span data-i18n="svc2_item1">Intervention sans destruction</span>
+              </li>
+              <li>
+                <span class="material-symbols-outlined">check</span>
+                <span data-i18n="svc2_item2">Urgence absolue : 30min max</span>
+              </li>
+            </ul>
+
+            <div class="emergency-card-price-row">
+              <span class="emergency-card-price">100€</span>
+              <span class="emergency-card-price-note" data-i18n="svc_ttc">HT</span>
+            </div>
+          </article>
+
+          <!-- RIGHT -->
+          <article class="emergency-card emergency-card-light">
+            <div class="emergency-card-top">
+              <div class="emergency-card-icon">
+                <span class="material-symbols-outlined fill-icon">tune</span>
+              </div>
+            </div>
+
+            <h3 class="emergency-card-title" data-i18n="svc3_title">
+              REMPLACEMENT<br />CYLINDRE RENFORCÉ
+            </h3>
+
+            <ul class="emergency-card-list">
+              <li>
+                <span class="material-symbols-outlined">check</span>
+                <span data-i18n="svc3_item1">Cylindres haute sécurité (A2P)</span>
+              </li>
+              <li>
+                <span class="material-symbols-outlined">check</span>
+                <span data-i18n="svc3_item2">Transparence de prix</span>
+              </li>
+            </ul>
+
+            <div class="emergency-card-price-row">
+              <span class="emergency-card-price">150€</span>
+              <span class="emergency-card-price-note" data-i18n="svc_ttc">DÈS</span>
+            </div>
+          </article>
+
+        </div>
+
+      </div>
+    </section>
+
+    <div class="services-cta">
+      <a href="tel:+33677235839" class="pill-action pill-action-gold nav-call-btn pill-big halo-effect">
+        <span class="pill-icon-circle pill-icon-phone">
+          <span class="material-symbols-outlined fill-icon">call</span>
+        </span>
+        <span>06 77 23 58 39</span>
+      </a>
+    </div>
+
+    <!-- ===================== URGENCY BANNER ===================== -->
+    <section class="urgency-banner">
+      <div class="banner-bg-text" aria-hidden="true">
+        <div class="banner-scroll-track">
+          <span class="banner-scroll-word">URGENCE</span>
+          <span class="banner-scroll-word">URGENCE</span>
+          <span class="banner-scroll-word">URGENCE</span>
+          <span class="banner-scroll-word">URGENCE</span>
+          <span class="banner-scroll-word">URGENCE</span>
+          <span class="banner-scroll-word">URGENCE</span>
+        </div>
+      </div>
+
+      <div class="urgency-content">
+        <div class="urgency-left">
+          <div class="urgency-icon-wrap">
+            <span class="material-symbols-outlined urgency-shield">verified_user</span>
+          </div>
+
+          <div>
+            <h3 class="urgency-title" data-i18n="banner_title">DÉPANNAGE 24H/7J</h3>
+            <span class="urgency-sub" data-i18n="banner_desc">DÉPLACEMENT DANS TOUTE L'ÎLE-DE-FRANCE · DEVIS GRATUIT · INTERVENTION RAPIDE</span>
+          </div>
+        </div>
+
+        <div class="urgency-cta-wrap">
+          <a href="tel:+33677235839" class="pill-action nav-call-btn halo-effect urgency-call-btn">
+            <span class="pill-icon-circle pill-icon-phone">
+              <span class="material-symbols-outlined fill-icon">call</span>
+            </span>
+            <span>06 77 23 58 39</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== PROCESS ===================== -->
+    <section class="process-section">
+      <div class="process-inner">
+        <div class="process-header">
+          <div>
+            <h2 class="process-title font-headline" data-i18n="process_title">Processus Rapide &amp; Sécurisé</h2>
+            <p class="process-desc" data-i18n="process_desc">Des étapes transparentes de votre appel SOS à un domicile sécurisé.</p>
+          </div>
+<a href="https://wa.me/33677235839" class="process-call-btn whatsapp-btn" target="_blank" rel="noopener noreferrer">
+  <span class="pill-icon-circle process-whatsapp-icon">
+    <img src="public/whatsapp.png" alt="WhatsApp">
+  </span>
+  <span>WhatsApp</span>
+</a>
+        </div>
+
+        <div class="steps-grid">
+          <div class="step">
+            <div class="step-number">01</div>
+            <div class="step-content">
+              <h4 class="step-title font-headline" data-i18n="step1_title">Appel d'urgence</h4>
+              <p class="step-desc" data-i18n="step1_desc">Appelez notre hotline 24h/24. Décrivez votre situation et votre position.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-number">02</div>
+            <div class="step-content">
+              <h4 class="step-title font-headline" data-i18n="step2_title">Diagnostic Rapide</h4>
+              <p class="step-desc" data-i18n="step2_desc">Recevez instantanément une estimation claire basée sur votre type de serrure.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-number">03</div>
+            <div class="step-content">
+              <h4 class="step-title font-headline" data-i18n="step3_title">Intervention</h4>
+              <p class="step-desc" data-i18n="step3_desc">Un technicien certifié arrive dans un délai de 30 à 45 minutes.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-number">04</div>
+            <div class="step-content">
+              <h4 class="step-title font-headline" data-i18n="step4_title">Problème Résolu</h4>
+              <p class="step-desc" data-i18n="step4_desc">Votre porte est ouverte, la serrure remplacée et la facture fournie.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== REVIEWS ===================== -->
+    <!-- ===================== REVIEWS ===================== -->
+<section class="reviews-section">
+  <div class="reviews-inner">
+    <div class="reviews-header">
+      <div>
+        <h2 class="reviews-title" data-i18n="reviews_title">Ce que disent nos clients</h2>
+
+        <div class="reviews-rating-row">
+          <div class="stars">
+            <span class="material-symbols-outlined fill-icon">star</span>
+            <span class="material-symbols-outlined fill-icon">star</span>
+            <span class="material-symbols-outlined fill-icon">star</span>
+            <span class="material-symbols-outlined fill-icon">star</span>
+            <span class="material-symbols-outlined fill-icon">star</span>
+          </div>
+          <span class="reviews-stats" data-i18n="reviews_stats">4.8/5 basé sur 150+ avis</span>
+        </div>
+      </div>
+
+      <div class="reviews-controls">
+        <div class="google-badge">
+          <img src="public/google.png" alt="Google">
+          <span>Avis Google</span>
+        </div>
+
+        <div class="review-btns">
+          <button id="prev-review" class="review-nav-btn" aria-label="Précédent">
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          <button id="next-review" class="review-nav-btn" aria-label="Suivant">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="reviews-viewport">
+      <div id="reviews-container">
+
+        <article class="review-card">
+          <div class="review-google-top">
+            <div class="review-google-badge">
+              <img src="public/google.png" alt="Google">
+              <span>Google</span>
+            </div>
+          </div>
+
+          <div class="review-avatar-row">
+            <div class="review-avatar">SA</div>
+            <div>
+              <div class="review-name" data-i18n="review1_name">Sara Amrani</div>
+              <div class="review-meta" data-i18n="review1_meta">Paris 15e • Il y a 2 jours</div>
+            </div>
+          </div>
+
+          <p class="review-text" data-i18n="review1_text">
+            “Porte claquée à 2h du matin, intervention très rapide et sans dégâts. Service sérieux, technicien rassurant et prix respecté.”
+          </p>
+        </article>
+
+        <article class="review-card">
+          <div class="review-google-top">
+            <div class="review-google-badge">
+              <img src="public/google.png" alt="Google">
+              <span>Google</span>
+            </div>
+          </div>
+
+          <div class="review-avatar-row">
+            <div class="review-avatar">YN</div>
+            <div>
+              <div class="review-name" data-i18n="review2_name">Yassine Nait</div>
+              <div class="review-meta" data-i18n="review2_meta">Saint-Denis • Il y a 1 semaine</div>
+            </div>
+          </div>
+
+          <p class="review-text" data-i18n="review2_text">
+            “Très bon serrurier, arrivé vite et tarif annoncé respecté. Travail propre et explications claires du début à la fin.”
+          </p>
+        </article>
+
+        <article class="review-card">
+          <div class="review-google-top">
+            <div class="review-google-badge">
+              <img src="public/google.png" alt="Google">
+              <span>Google</span>
+            </div>
+          </div>
+
+          <div class="review-avatar-row">
+            <div class="review-avatar">FD</div>
+            <div>
+              <div class="review-name" data-i18n="review3_name">Fatou Diop</div>
+              <div class="review-meta" data-i18n="review3_meta">Boulogne • Il y a 3 semaines</div>
+            </div>
+          </div>
+
+          <p class="review-text" data-i18n="review3_text">
+            “Service rapide et professionnel après une serrure bloquée. Intervention efficace, artisan poli et très rassurant.”
+          </p>
+        </article>
+
+        <article class="review-card">
+          <div class="review-google-top">
+            <div class="review-google-badge">
+              <img src="public/google.png" alt="Google">
+              <span>Google</span>
+            </div>
+          </div>
+
+          <div class="review-avatar-row">
+            <div class="review-avatar">MB</div>
+            <div>
+              <div class="review-name" data-i18n="review4_name">Mariam Bamba</div>
+              <div class="review-meta" data-i18n="review4_meta">Créteil • Il y a 5 jours</div>
+            </div>
+          </div>
+
+          <p class="review-text" data-i18n="review4_text">
+            “J’ai appelé en urgence en soirée, le technicien est arrivé rapidement. Travail propre, devis clair et très bon contact.”
+          </p>
+        </article>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+        <!-- ===================== QUOTE FORM ===================== -->
+<!-- ===================== QUOTE FORM ===================== -->
+<section id="quote">
+  <div class="quote-inner">
+
+    <!-- LEFT -->
+    <div class="quote-left">
+      <div class="quote-kicker" data-i18n="quote_kicker">DEVIS RAPIDE</div>
+      <h2 class="quote-left-title reviews-title" data-i18n="quote_main_title">
+  OBTENEZ UNE ESTIMATION RAPIDE
+</h2>
+
+      <div class="quote-side-card">
+        <div class="quote-side-icon">
+          <img src="public/logowhats.png" alt="WhatsApp" />
+        </div>
+
+        <h3 class="quote-side-title" data-i18n="quote_side_title">Contactez-nous sur WhatsApp</h3>
+        <p class="quote-side-text" data-i18n="quote_side_text">
+          Discutez directement avec notre équipe pour une réservation rapide ou une urgence.
+          Envoyez votre demande et recevez une réponse rapidement.
+        </p>
+
+        <a href="https://wa.me/33677235839" class="quote-side-btn" target="_blank" rel="noopener noreferrer">
+          <span data-i18n="quote_side_btn">ENVOYEZ-NOUS UN MESSAGE</span>
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="quote-form-wrap">
+      <form class="quote-form" id="quote-form">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="quote-name" data-i18n="form_name">Nom complet</label>
+            <input
+              class="form-input"
+              id="quote-name"
+              name="name"
+              type="text"
+              data-i18n-placeholder="form_placeholder_name"
+              placeholder="Votre nom complet"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="quote-phone" data-i18n="form_phone">Numéro de téléphone</label>
+            <input
+              class="form-input"
+              id="quote-phone"
+              name="phone"
+              type="tel"
+              placeholder="06 00 00 00 00"
+              required
+              pattern="^(?:(?:\+33|0033)\s?[1-9]|0[1-9])(?:[\s.-]?\d{2}){4}$"
+              title="Entrez un numéro valide, par exemple : 06 00 00 00 00"
+            />
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="quote-email" data-i18n="form_email">Email</label>
+            <input
+              class="form-input"
+              id="quote-email"
+              name="email"
+              type="email"
+              placeholder="vous@email.com"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="service-category" data-i18n="form_category_label">Catégorie</label>
+            <select class="form-select" id="service-category" name="category" required>
+              <option value="" data-i18n="form_category_placeholder">Sélectionnez votre besoin</option>
+              <option value="depannage-ouverture" data-i18n="cat1">Dépannage & ouverture</option>
+              <option value="serrures-cylindres" data-i18n="cat2">Serrures & cylindres</option>
+              <option value="securisation-effraction" data-i18n="cat3">Sécurisation & effraction</option>
+              <option value="portes-blindage" data-i18n="cat4">Portes & blindage</option>
+              <option value="equipements-accessoires" data-i18n="cat5">Équipements & accessoires</option>
+              <option value="reglage-maintenance" data-i18n="cat6">Réglages & maintenance</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-1">
+          <div class="form-group">
+            <label class="form-label" for="service-detail" data-i18n="form_service">Service souhaité</label>
+            <select class="form-select" id="service-detail" name="service" required disabled>
+              <option value="" data-i18n="form_service_placeholder">Choisissez une intervention</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-1">
+          <div class="form-group">
+            <label class="form-label" for="quote-message" data-i18n="form_message_label">Décrivez votre demande</label>
+            <textarea
+              class="form-textarea"
+              id="quote-message"
+              name="message"
+              rows="4"
+              data-i18n-placeholder="form_message_placeholder"
+              placeholder="Expliquez rapidement votre besoin..."
+              required
+            ></textarea>
+          </div>
+        </div>
+
+        <button class="form-submit-btn" type="submit" data-i18n="btn_submit">
+          OBTENIR MON DEVIS GRATUIT
+        </button>
+
+        <div id="form-success" class="form-success-msg" style="display:none;">
+          <span class="material-symbols-outlined fill-icon form-success-icon">check_circle</span>
+          <span data-i18n="form_success">Votre demande a bien été envoyée ! Nous vous répondons très rapidement.</span>
+        </div>
+
+        <div id="form-error" class="form-error-msg" style="display:none;">
+          <span class="material-symbols-outlined fill-icon form-error-icon">error</span>
+          <span data-i18n="form_error">Une erreur est survenue. Veuillez réessayer ou nous appeler directement.</span>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+    <!-- ===================== FAQ ===================== -->
+    <section id="faq">
+  <div class="faq-wrap">
+    <div class="faq-left">
+      <h2 class="faq-title" data-i18n="faq_title">QUESTIONS FRÉQUENTES</h2>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="faq1_q">Quel est le délai d'intervention ?</span>
+            <span class="material-symbols-outlined faq-icon">expand_more</span>
+          </button>
+          <div class="faq-answer" data-i18n="faq1_a">
+            En moyenne, nos techniciens interviennent dans un délai de 15 à 30 minutes sur toute l'Île-de-France, selon les conditions de circulation.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="faq2_q">Vos prix sont-ils fixes ?</span>
+            <span class="material-symbols-outlined faq-icon">expand_more</span>
+          </button>
+          <div class="faq-answer" data-i18n="faq2_a">
+            Oui, nous appliquons une grille tarifaire transparente. Aucun frais caché.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="faq3_q">Risquez-vous d'abîmer ma porte ?</span>
+            <span class="material-symbols-outlined faq-icon">expand_more</span>
+          </button>
+          <div class="faq-answer" data-i18n="faq3_a">
+            Dans 95 % des cas, nous utilisons des techniques non destructives.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="faq4_q">Mon assurance couvre-t-elle le coût ?</span>
+            <span class="material-symbols-outlined faq-icon">expand_more</span>
+          </button>
+          <div class="faq-answer" data-i18n="faq4_a">
+            Oui, la plupart des assurances habitation couvrent ces interventions.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-right">
+      <div class="faq-side-card">
+  <div class="faq-side-pill">FAQ</div>
+
+  <h3 class="faq-side-title" data-i18n="faq_side_title">
+    Vos questions,<br />
+    nos réponses
+  </h3>
+
+  <p class="faq-side-text" data-i18n="faq_side_text">
+    Parce que la confiance passe aussi par la transparence,
+    retrouvez ici les réponses aux questions les plus fréquentes
+    avant toute intervention.
+  </p>
+
+  <a href="tel:+33677235839" class="pill-action pill-action-gold nav-call-btn pill-big halo-effect faq-call-btn">
+    <span class="pill-icon-circle pill-icon-phone">
+      <span class="material-symbols-outlined fill-icon">call</span>
+    </span>
+    <span>06 77 23 58 39</span>
+  </a>
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="site-footer">
+  <div class="footer-inner">
+
+    <div class="footer-top">
+  <div class="footer-brand-wrap">
+    <a href="#emergency" class="footer-brand" aria-label="Accueil">
+      <img src="public/logo.png" alt="Clelim Serrurerie" class="footer-logo" />
+    </a>
+
+    <a href="mailto:clelimserrurerie@gmail.com" class="footer-email">
+      clelimserrurerie@gmail.com
+    </a>
+  </div>
+
+      <div class="footer-actions">
+        <a href="https://wa.me/33677235839" class="pill-action footer-wa-btn">
+          <span class="pill-icon-circle footer-wa-icon">
+            <img src="public/whatsapp.png" alt="WhatsApp">
+          </span>
+          <span>WhatsApp</span>
+        </a>
+
+        <a href="tel:+33677235839" class="pill-action pill-action-gold nav-call-btn footer-call-btn halo-effect">
+          <span class="pill-icon-circle pill-icon-phone">
+            <span class="material-symbols-outlined fill-icon">call</span>
+          </span>
+          <span>06 77 23 58 39</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-links">
+        <a href="politique-confidentialite.html">Politique de confidentialité</a>
+        <a href="cgu.html">CGU</a>
+      </div>
+
+      <div class="footer-copy">
+        © 2026 Clelim Serrurerie. Tous droits réservés.
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+  <!-- ===================== FLOATING BUTTONS ===================== -->
+<div class="fab-container">
+  <a href="tel:+33677235839" class="fab fab-call halo-effect" aria-label="Appeler">
+    <span class="material-symbols-outlined fill-icon">phone_in_talk</span>
+  </a>
+
+  <a href="https://wa.me/33677235839" class="fab fab-wa" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer">
+    <img src="public/whatsapp.png" alt="WhatsApp" />
+  </a>
+</div>
+
+  <!-- Site Script -->
+  <script src="script.js"></script>
+</body>
+</html>
