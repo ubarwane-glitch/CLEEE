@@ -18,7 +18,7 @@ exports.handler = async (event, context) => {
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     const fromEmail = process.env.FROM_EMAIL || 'onboarding@resend.dev';
-    const toEmail = 'clelimserrurerie@gmail.com';
+    const toEmail = process.env.TO_EMAIL || 'clelimserrurerie@gmail.com';
 
     const urgencyLabel = {
       urgent: 'Urgence immédiate',

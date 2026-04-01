@@ -11,6 +11,7 @@
     "format:check": "npx prettier --check \"**/*.{html,css,js,json,md}\"",
     "validate": "node scripts/validate.js",
     "test:resend": "node test-resend.js",
+    "test:resend:auto": "node test-resend-auto.js",
     "test:resend:pdf": "node test-resend-with-pdf.js"
   },
   "keywords": [
