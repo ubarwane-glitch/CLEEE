@@ -9,7 +9,9 @@
     "build": "node scripts/build.js",
     "format": "npx prettier --write \"**/*.{html,css,js,json,md}\"",
     "format:check": "npx prettier --check \"**/*.{html,css,js,json,md}\"",
-    "validate": "node scripts/validate.js"
+    "validate": "node scripts/validate.js",
+    "test:resend": "node test-resend.js",
+    "test:resend:pdf": "node test-resend-with-pdf.js"
   },
   "keywords": [
     "serrurerie",
