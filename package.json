@@ -4,7 +4,8 @@
   "description": "Site vitrine professionnel pour Clelim Serrurerie - Dépannage serrurerie 24h/24 en Île-de-France",
   "type": "module",
   "scripts": {
-    "dev": "npx serve . -p 3000",
+    "dev": "node dev-server.js",
+    "dev:simple": "npx serve . -p 3000",
     "preview": "npx serve . -p 4173",
     "build": "node scripts/build.js",
     "format": "npx prettier --write \"**/*.{html,css,js,json,md}\"",
@@ -27,6 +28,7 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
+    "express": "^4.22.1",
     "jspdf": "^2.5.1",
     "nodemailer": "^6.9.8",
     "resend": "^3.2.0"
