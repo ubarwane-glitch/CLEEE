@@ -35,7 +35,13 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="mobile.css" />
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <script src="config/site.config.js" defer></script>
+  <script src="config/business.config.js" defer></script>
+  <script src="config/quote.config.js" defer></script>
+  <script src="utils/generateQuoteNumber.js" defer></script>
+  <script src="utils/generateQuotePdf.js" defer></script>
 
   <script type="application/ld+json">
   {
@@ -730,6 +736,62 @@
             <label class="form-label" for="service-detail" data-i18n="form_service">Service souhaité</label>
             <select class="form-select" id="service-detail" name="service" required disabled>
               <option value="" data-i18n="form_service_placeholder">Choisissez une intervention</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="quote-address">Adresse</label>
+            <input
+              class="form-input"
+              id="quote-address"
+              name="address"
+              type="text"
+              placeholder="14 Rue de la République"
+              required
+              minlength="5"
+              maxlength="200"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="quote-postal">Code postal</label>
+            <input
+              class="form-input"
+              id="quote-postal"
+              name="postal"
+              type="text"
+              placeholder="75001"
+              required
+              pattern="^\d{5}$"
+              title="Code postal français à 5 chiffres"
+            />
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="quote-city">Ville</label>
+            <input
+              class="form-input"
+              id="quote-city"
+              name="city"
+              type="text"
+              placeholder="Paris"
+              required
+              minlength="2"
+              maxlength="100"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="quote-urgency">Urgence</label>
+            <select class="form-select" id="quote-urgency" name="urgency" required>
+              <option value="">Sélectionnez</option>
+              <option value="urgent">Urgence immédiate (porte bloquée)</option>
+              <option value="rapide">Rapide (sous 24h)</option>
+              <option value="normal">Standard (sous 48h)</option>
             </select>
           </div>
         </div>

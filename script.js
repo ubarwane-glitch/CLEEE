@@ -744,62 +744,177 @@ document.addEventListener('DOMContentLoaded', function () {
         submitBtn.textContent = '⏳ Envoi en cours...';
       }
 
-      var data = {
+      var clientData = {
         name:     document.getElementById('quote-name')?.value.trim() || '',
         phone:    document.getElementById('quote-phone')?.value.trim() || '',
         email:    document.getElementById('quote-email')?.value.trim() || '',
+        address:  document.getElementById('quote-address')?.value.trim() || '',
+        postalCode: document.getElementById('quote-postal')?.value.trim() || '',
+        city:     document.getElementById('quote-city')?.value.trim() || '',
         category: document.getElementById('service-category')?.value || '',
         service:  document.getElementById('service-detail')?.value || '',
+        urgency:  document.getElementById('quote-urgency')?.value || 'normal',
         message:  document.getElementById('quote-message')?.value.trim() || '',
-        _subject: 'Demande de devis - Clelim Serrurerie',
-        _language: lang,
-        _timestamp: new Date().toISOString()
       };
 
-      var endpoint = FORMSPREE_ENDPOINT;
-      var timeout = setTimeout(function() {
-        if (formError) formError.style.display = 'flex';
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT';
-        }
-      }, 15000);
+      try {
+        var quoteNumber = generateQuoteNumber();
+        var createdDate = new Date();
+        var validityDate = new Date(createdDate);
+        validityDate.setDate(validityDate.getDate() + 30);
 
-      fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(data)
-      })
-      .then(function (response) {
-        clearTimeout(timeout);
-        if (response.ok) {
-          lastSubmitTime = now;
-          form.reset();
-          if (serviceSelect) serviceSelect.disabled = true;
-          if (formSuccess) {
-            formSuccess.style.display = 'flex';
-            formSuccess.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          }
+        var formatDate = function(date) {
+          var d = date.getDate().toString().padStart(2, '0');
+          var m = (date.getMonth() + 1).toString().padStart(2, '0');
+          var y = date.getFullYear();
+          return d + '/' + m + '/' + y;
+        };
+
+        var selectedService = quoteConfig.servicesByCategory[clientData.category]?.find(function(s) {
+          return s.id === clientData.service || s.label === clientData.service;
+        });
+
+        var lineItems = [];
+        lineItems.push({
+          label: 'Diagnostic',
+          description: '',
+          qty: 1,
+          unitPrice: 60,
+          totalHT: 60,
+          tva: 0
+        });
+
+        if (selectedService) {
+          lineItems.push({
+            label: selectedService.label,
+            description: selectedService.description || '',
+            qty: 1,
+            unitPrice: selectedService.price,
+            totalHT: selectedService.price,
+            tva: selectedService.tva || 0
+          });
+        }
+
+        lineItems.push({
+          label: 'Teste de fonctionnement et ajustement finaux',
+          description: '',
+          qty: 1,
+          unitPrice: 30,
+          totalHT: 30,
+          tva: 0
+        });
+
+        lineItems.push({
+          label: 'Frais de déplacement',
+          description: '',
+          qty: 1,
+          unitPrice: 30,
+          totalHT: 30,
+          tva: 0
+        });
+
+        var totalHT = lineItems.reduce(function(sum, item) { return sum + item.totalHT; }, 0);
+        var totalTVA = 0;
+        var totalTTC = totalHT + totalTVA;
+
+        if (clientData.urgency === 'urgent') {
+          totalHT *= 1.5;
+          totalTTC = totalHT;
+        } else if (clientData.urgency === 'rapide') {
+          totalHT *= 1.2;
+          totalTTC = totalHT;
+        }
+
+        var pdfData = {
+          business: businessConfig.company,
+          client: {
+            name: clientData.name,
+            email: clientData.email,
+            phone: clientData.phone,
+            address: clientData.address,
+            postalCode: clientData.postalCode,
+            city: clientData.city
+          },
+          quote: {
+            number: quoteNumber,
+            description: selectedService?.label || 'Intervention de serrurerie',
+            createdDate: formatDate(createdDate),
+            validityDate: formatDate(validityDate),
+            totalHT: totalHT,
+            totalTVA: totalTVA,
+            totalTTC: totalTTC,
+            notes: businessConfig.quote.notes
+          },
+          lineItems: lineItems,
+          includeCGV: true
+        };
+
+        var pdf = generateQuotePDF(pdfData);
+        var pdfBase64 = pdf.output('datauristring').split(',')[1];
+
+        var apiEndpoint = '/.netlify/functions/send-quote';
+        if (window.location.hostname.includes('vercel')) {
+          apiEndpoint = '/api/send-quote';
+        }
+
+        var timeout = setTimeout(function() {
+          if (formError) formError.style.display = 'flex';
           if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT';
           }
-        } else {
-          throw new Error('HTTP error ' + response.status);
-        }
-      })
-      .catch(function (error) {
-        clearTimeout(timeout);
-        console.error('Form submission error:', error);
+        }, 30000);
+
+        fetch(apiEndpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            pdfBase64: pdfBase64,
+            quoteData: pdfData.quote,
+            clientData: clientData
+          })
+        })
+        .then(function (response) {
+          clearTimeout(timeout);
+          return response.json();
+        })
+        .then(function(result) {
+          if (result.success) {
+            lastSubmitTime = now;
+            form.reset();
+            if (serviceSelect) serviceSelect.disabled = true;
+            if (formSuccess) {
+              formSuccess.style.display = 'flex';
+              formSuccess.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT';
+            }
+          } else {
+            throw new Error(result.error || 'Erreur lors de l\'envoi');
+          }
+        })
+        .catch(function (error) {
+          clearTimeout(timeout);
+          console.error('Form submission error:', error);
+          if (formError) formError.style.display = 'flex';
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT';
+          }
+        });
+      } catch (error) {
+        console.error('PDF generation error:', error);
         if (formError) formError.style.display = 'flex';
         if (submitBtn) {
           submitBtn.disabled = false;
           submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT';
         }
-      });
+      }
     });
   }
 

@@ -286,6 +286,80 @@ Pour toute question technique :
 - Consultez la documentation de [Formspree](https://help.formspree.io/)
 - Ouvrez une issue sur le dépôt Git
 
+---
+
+## Système de Génération de Devis
+
+Ce site intègre un système complet de génération automatique de devis PDF.
+
+### Fonctionnalités
+
+Lorsqu'un client soumet le formulaire de contact :
+
+1. ✅ Génération automatique d'un PDF professionnel
+2. ✅ Envoi par email à clelimserrurerie@gmail.com
+3. ✅ Numérotation automatique des devis (D2026-XXXXX)
+4. ✅ Calcul automatique des prix selon l'urgence
+5. ✅ Option d'envoi de copie au client
+
+### Configuration du système de devis
+
+Pour activer le système de génération de devis :
+
+1. **Créer un compte Resend** (service d'envoi d'emails)
+   - Inscrivez-vous sur [https://resend.com](https://resend.com)
+   - Créez une API key
+   - (Recommandé) Vérifiez votre domaine
+
+2. **Configurer les variables d'environnement**
+
+Sur Netlify :
+- Site Settings > Environment variables
+- Ajoutez `RESEND_API_KEY` avec votre clé API
+
+Sur Vercel :
+- Settings > Environment Variables
+- Ajoutez `RESEND_API_KEY` avec votre clé API
+
+3. **Redéployer le site**
+
+Variables disponibles :
+```bash
+RESEND_API_KEY=re_xxxxx              # OBLIGATOIRE
+FROM_EMAIL=noreply@votredomaine.com  # Optionnel
+SEND_COPY_TO_CLIENT=true             # Optionnel
+BUSINESS_PHONE=06 77 23 58 39        # Optionnel
+```
+
+4. **Tester le système**
+   - Remplissez le formulaire sur le site
+   - Vérifiez la réception de l'email avec le PDF
+
+### Documentation complète
+
+Pour plus de détails sur le système de devis :
+- **Configuration** : voir [QUOTE-SYSTEM-README.md](QUOTE-SYSTEM-README.md)
+- **Personnalisation des prix** : voir `config/quote.config.js`
+- **Personnalisation du PDF** : voir `utils/generateQuotePdf.js`
+- **Modifier les infos entreprise** : voir `config/business.config.js`
+
+### Dépannage rapide
+
+**Le PDF ne se génère pas**
+- Vérifiez la console navigateur (F12)
+- Assurez-vous que jsPDF est chargé
+
+**L'email n'est pas envoyé**
+- Vérifiez que `RESEND_API_KEY` est configuré
+- Consultez les logs Netlify/Vercel (Functions > send-quote)
+- Vérifiez le dashboard Resend
+
+**Emails en spam**
+- Vérifiez votre domaine dans Resend
+- Configurez les enregistrements DNS (SPF, DKIM)
+
+---
+
 ## Licence
 
 Propriété de Clelim Serrurerie. Tous droits réservés.
