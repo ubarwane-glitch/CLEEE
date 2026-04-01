@@ -6,24 +6,22 @@ L'erreur 404 était causée par **des fichiers images manquants** référencés 
 
 ## Ce qui a été corrigé
 
-1. ✅ Ajout de `public/google.png` (logo Google pour les avis)
-2. ✅ Ajout de `public/whatsapp.png` (icône WhatsApp)
-3. ✅ Ajout de `public/logowhats.png` (logo WhatsApp alternatif)
-4. ✅ Correction du fichier `netlify.toml` (syntaxe invalide)
-5. ✅ Ajout du fichier `_headers` pour les headers de sécurité
-6. ✅ Correction du fichier `_redirects`
+1. ✅ Ajout de toutes les images dans `public/` (google.png, whatsapp.png, logowhats.png, logo.png)
+2. ✅ Correction du fichier `netlify.toml` (syntaxe invalide)
+3. ✅ Ajout du fichier `_headers` pour les headers de sécurité
+4. ✅ Correction du fichier `_redirects`
+5. ✅ Suppression du bouton "retour en haut" (back-to-top)
 
-## Notes importantes
+## Images présentes
 
-Les images ajoutées sont des **SVG placeholders**. Pour un rendu optimal, remplacez-les par :
-
-- **google.png** : Logo Google officiel (24x24px minimum)
-- **whatsapp.png** : Icône WhatsApp officielle (24x24px minimum)
-- **logowhats.png** : Logo WhatsApp grande taille (48x48px minimum)
-
-Téléchargez les logos officiels :
-- Google : https://partnermarketinghub.withgoogle.com/
-- WhatsApp : https://www.whatsapp.com/brand
+Le dossier `public/` contient maintenant :
+- ✅ `logo.png` (84K)
+- ✅ `google.png` (409K)
+- ✅ `whatsapp.png` (21K)
+- ✅ `logowhats.png` (1.7M)
+- `IMG_6065.JPG` (310K - non utilisé actuellement)
+- `serrure.png` (512K - non utilisé actuellement)
+- `serrurerie.png` (3.8M - non utilisé actuellement)
 
 ## Comment redéployer
 

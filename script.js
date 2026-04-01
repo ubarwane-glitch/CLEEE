@@ -907,28 +907,7 @@ document.addEventListener('DOMContentLoaded', function () {
   triggerAboutStats();
 
   // -------------------------------------------------------
-  // 10. BACK TO TOP BUTTON
-  // -------------------------------------------------------
-  var backToTopBtn = document.getElementById('backToTop');
-
-  function toggleBackToTop() {
-    if (window.scrollY > 400) {
-      backToTopBtn && backToTopBtn.classList.add('visible');
-    } else {
-      backToTopBtn && backToTopBtn.classList.remove('visible');
-    }
-  }
-
-  if (backToTopBtn) {
-    backToTopBtn.addEventListener('click', function() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-    window.addEventListener('scroll', toggleBackToTop);
-    toggleBackToTop();
-  }
-
-  // -------------------------------------------------------
-  // 11. AREAS HIGHLIGHT ANIMATION
+  // 10. AREAS HIGHLIGHT ANIMATION
   // -------------------------------------------------------
   var areaTags = document.querySelectorAll('.area-tag');
   if (areaTags.length) {
@@ -942,7 +921,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // -------------------------------------------------------
-  // 12. LAZY LOADING IMAGES
+  // 11. LAZY LOADING IMAGES
   // -------------------------------------------------------
   if ('loading' in HTMLImageElement.prototype) {
     var images = document.querySelectorAll('img[loading="lazy"]');
