@@ -25,6 +25,14 @@ console.log('   API Key:', RESEND_API_KEY.substring(0, 10) + '...\n');
 app.post('/.netlify/functions/send-quote', async (req, res) => {
   console.log('\n📨 Nouvelle demande de devis reçue');
 
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   try {
     const { pdfBase64, quoteData, clientData } = req.body;
 
@@ -202,10 +210,12 @@ app.post('/.netlify/functions/send-quote', async (req, res) => {
 
   } catch (error) {
     console.error('❌ Error:', error.message);
+    console.error('Stack trace:', error.stack);
 
     res.status(500).json({
       success: false,
       error: error.message || 'Erreur lors de l\'envoi du devis',
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined,
     });
   }
 });

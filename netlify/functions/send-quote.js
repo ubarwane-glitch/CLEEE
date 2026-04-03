@@ -1,17 +1,44 @@
 const { Resend } = require('resend');
 
 exports.handler = async (event, context) => {
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type, Accept',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Content-Type': 'application/json',
+  };
+
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers,
+      body: '',
+    };
+  }
+
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
+      headers,
       body: JSON.stringify({ error: 'Method Not Allowed' }),
     };
   }
 
+  console.log('📨 Netlify function - Nouvelle demande de devis');
+
   try {
     const { pdfBase64, quoteData, clientData } = JSON.parse(event.body);
 
+    console.log('📧 Client:', clientData?.name);
+    console.log('📄 Devis:', quoteData?.number);
+
+    if (!pdfBase64 || !quoteData || !clientData) {
+      console.error('❌ Missing required data');
+      throw new Error('Missing required data: pdfBase64, quoteData, or clientData');
+    }
+
     if (!process.env.RESEND_API_KEY) {
+      console.error('❌ RESEND_API_KEY not configured');
       throw new Error('RESEND_API_KEY not configured');
     }
 
@@ -131,11 +158,16 @@ exports.handler = async (event, context) => {
     });
 
     if (error) {
-      console.error('Resend error:', error);
+      console.error('❌ Resend error:', error);
       throw error;
     }
 
+    console.log('✅ Email envoyé avec succès!');
+    console.log('   Email ID:', data?.id);
+
     if (process.env.SEND_COPY_TO_CLIENT === 'true' && clientData.email) {
+      console.log('📤 Envoi copie au client:', clientData.email);
+
       await resend.emails.send({
         from: fromEmail,
         to: clientData.email,
@@ -168,6 +200,7 @@ exports.handler = async (event, context) => {
 
     return {
       statusCode: 200,
+      headers,
       body: JSON.stringify({
         success: true,
         message: 'Devis envoyé avec succès',
@@ -175,10 +208,12 @@ exports.handler = async (event, context) => {
       }),
     };
   } catch (error) {
-    console.error('Error sending quote:', error);
+    console.error('❌ Error sending quote:', error.message);
+    console.error('Stack trace:', error.stack);
 
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({
         success: false,
         error: error.message || 'Erreur lors de l\'envoi du devis',

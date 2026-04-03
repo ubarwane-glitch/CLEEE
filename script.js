@@ -712,18 +712,18 @@ document.addEventListener('DOMContentLoaded', function () {
   var honeypot    = document.getElementById('honeypot');
 
   if (form) {
-    var lastSubmitTime = 0;
-    var MIN_SUBMIT_INTERVAL = 3000;
+    var isSubmitting = false;
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      var now = Date.now();
-      if (now - lastSubmitTime < MIN_SUBMIT_INTERVAL) {
+      if (isSubmitting) {
+        console.log('⚠️ Form already submitting, ignoring duplicate submit');
         return;
       }
 
       if (honeypot && honeypot.value !== '') {
+        console.log('🤖 Honeypot triggered, ignoring spam');
         return;
       }
 
@@ -731,6 +731,8 @@ document.addEventListener('DOMContentLoaded', function () {
         form.reportValidity();
         return;
       }
+
+      isSubmitting = true;
 
       var submitBtn = form.querySelector('.form-submit-btn');
       var lang = getCurrentLang();
@@ -895,13 +897,14 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('   Environment:', window.location.hostname);
 
         var timeout = setTimeout(function() {
-          console.error('⏱️ Timeout: Email sending took too long (>30s)');
+          console.error('⏱️ Timeout: Email sending took too long (>15s)');
+          isSubmitting = false;
           if (formError) formError.style.display = 'flex';
           if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT';
           }
-        }, 30000);
+        }, 15000);
 
         console.log('📤 Sending request to:', apiEndpoint);
 
@@ -933,7 +936,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
           if (result.success) {
             console.log('✅ Email sent successfully!');
-            lastSubmitTime = now;
+            isSubmitting = false;
             form.reset();
             if (serviceSelect) serviceSelect.disabled = true;
             if (formSuccess) {
@@ -946,11 +949,13 @@ document.addEventListener('DOMContentLoaded', function () {
             }
           } else {
             console.error('❌ Server error:', result.error);
+            isSubmitting = false;
             throw new Error(result.error || 'Erreur lors de l\'envoi');
           }
         })
         .catch(function (error) {
           clearTimeout(timeout);
+          isSubmitting = false;
           console.error('❌ Form submission error:', error);
           console.error('   Error name:', error.name);
           console.error('   Error message:', error.message);
@@ -975,6 +980,7 @@ document.addEventListener('DOMContentLoaded', function () {
           }
         });
       } catch (error) {
+        isSubmitting = false;
         console.error('❌ PDF generation error:', error);
         console.error('   Error name:', error.name);
         console.error('   Error message:', error.message);
