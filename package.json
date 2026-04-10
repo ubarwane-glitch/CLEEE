@@ -10,10 +10,7 @@
     "build": "node scripts/build.js",
     "format": "npx prettier --write \"**/*.{html,css,js,json,md}\"",
     "format:check": "npx prettier --check \"**/*.{html,css,js,json,md}\"",
-    "validate": "node scripts/validate.js",
-    "test:resend": "node test-resend.js",
-    "test:resend:auto": "node test-resend-auto.js",
-    "test:resend:pdf": "node test-resend-with-pdf.js"
+    "validate": "node scripts/validate.js"
   },
   "keywords": [
     "serrurerie",
@@ -28,10 +25,7 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
-    "express": "^4.22.1",
-    "jspdf": "^2.5.1",
-    "nodemailer": "^6.9.8",
-    "resend": "^3.2.0"
+    "express": "^4.22.1"
   },
   "devDependencies": {
     "prettier": "^3.2.5",

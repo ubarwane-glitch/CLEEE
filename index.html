@@ -35,13 +35,9 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="mobile.css" />
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
   <script src="config/site.config.js" defer></script>
-  <script src="config/business.config.js" defer></script>
-  <script src="config/quote.config.js" defer></script>
-  <script src="utils/generateQuoteNumber.js" defer></script>
-  <script src="utils/generateQuotePdf.js" defer></script>
 
   <script type="application/ld+json">
   {
@@ -665,7 +661,7 @@
 
     <!-- RIGHT -->
     <div class="quote-form-wrap">
-      <form class="quote-form" id="quote-form" netlify netlify-honeypot="honeypot">
+      <form class="quote-form" id="quote-form">
         <input type="hidden" name="form-name" value="contact" />
 
         <div style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;" aria-hidden="true">

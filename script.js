@@ -433,7 +433,9 @@ var serviceOptionsAll = {
   }
 };
 
-var FORMSPREE_ENDPOINT = window.siteConfig?.forms?.formspreeEndpoint || 'https://formspree.io/f/VOTRE_ID_ICI';
+var EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID';
+var EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+var EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
 
 // ---------- Init on DOM Ready ----------
 document.addEventListener('DOMContentLoaded', function () {
@@ -704,12 +706,16 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // -------------------------------------------------------
-  // 6. FORM SUBMISSION (Production-ready)
+  // 6. FORM SUBMISSION (EmailJS)
   // -------------------------------------------------------
   var form        = document.getElementById('quote-form');
   var formSuccess = document.getElementById('form-success');
   var formError   = document.getElementById('form-error');
   var honeypot    = document.getElementById('honeypot');
+
+  if (typeof emailjs !== 'undefined') {
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+  }
 
   if (form) {
     var isSubmitting = false;
@@ -717,15 +723,9 @@ document.addEventListener('DOMContentLoaded', function () {
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      if (isSubmitting) {
-        console.log('⚠️ Form already submitting, ignoring duplicate submit');
-        return;
-      }
+      if (isSubmitting) return;
 
-      if (honeypot && honeypot.value !== '') {
-        console.log('🤖 Honeypot triggered, ignoring spam');
-        return;
-      }
+      if (honeypot && honeypot.value !== '') return;
 
       if (!form.checkValidity()) {
         form.reportValidity();
@@ -737,268 +737,60 @@ document.addEventListener('DOMContentLoaded', function () {
       var submitBtn = form.querySelector('.form-submit-btn');
       var lang = getCurrentLang();
       var t = translations[lang] || translations['fr'];
+      var originalBtnText = submitBtn ? submitBtn.textContent : '';
 
       if (formSuccess) formSuccess.style.display = 'none';
       if (formError)   formError.style.display   = 'none';
 
-      console.log('🔍 Form submitted - Checking dependencies...');
-      console.log('   businessConfig:', typeof businessConfig !== 'undefined' ? '✅ LOADED' : '❌ MISSING');
-      console.log('   quoteConfig:', typeof quoteConfig !== 'undefined' ? '✅ LOADED' : '❌ MISSING');
-      console.log('   generateQuoteNumber:', typeof generateQuoteNumber !== 'undefined' ? '✅ LOADED' : '❌ MISSING');
-      console.log('   generateQuotePDF:', typeof generateQuotePDF !== 'undefined' ? '✅ LOADED' : '❌ MISSING');
-      console.log('   jsPDF:', typeof window.jspdf !== 'undefined' && window.jspdf.jsPDF ? '✅ LOADED' : '❌ MISSING');
-
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = '⏳ Envoi en cours...';
+        submitBtn.textContent = 'Envoi en cours...';
       }
 
-      var clientData = {
-        name:     document.getElementById('quote-name')?.value.trim() || '',
-        phone:    document.getElementById('quote-phone')?.value.trim() || '',
-        email:    document.getElementById('quote-email')?.value.trim() || '',
-        address:  document.getElementById('quote-address')?.value.trim() || '',
-        postalCode: document.getElementById('quote-postal')?.value.trim() || '',
-        city:     document.getElementById('quote-city')?.value.trim() || '',
-        category: document.getElementById('service-category')?.value || '',
-        service:  document.getElementById('service-detail')?.value || '',
-        urgency:  document.getElementById('quote-urgency')?.value || 'normal',
-        message:  document.getElementById('quote-message')?.value.trim() || '',
+      var urgencyLabels = {
+        urgent: 'Urgence immediate',
+        rapide: 'Rapide (sous 24h)',
+        normal: 'Standard (sous 48h)'
       };
 
-      try {
-        if (typeof generateQuoteNumber === 'undefined') {
-          throw new Error('generateQuoteNumber function not loaded');
-        }
-        if (typeof generateQuotePDF === 'undefined') {
-          throw new Error('generateQuotePDF function not loaded');
-        }
-        if (typeof businessConfig === 'undefined') {
-          throw new Error('businessConfig not loaded');
-        }
-        if (typeof quoteConfig === 'undefined') {
-          throw new Error('quoteConfig not loaded');
-        }
-        if (typeof window.jspdf === 'undefined' || !window.jspdf.jsPDF) {
-          throw new Error('jsPDF library not loaded');
-        }
+      var categoryEl = document.getElementById('service-category');
+      var categoryText = categoryEl ? categoryEl.options[categoryEl.selectedIndex].text : '';
 
-        console.log('✅ All dependencies loaded, generating quote...');
+      var templateParams = {
+        from_name:    document.getElementById('quote-name').value.trim(),
+        phone:        document.getElementById('quote-phone').value.trim(),
+        email:        document.getElementById('quote-email').value.trim(),
+        address:      document.getElementById('quote-address').value.trim(),
+        postal_code:  document.getElementById('quote-postal').value.trim(),
+        city:         document.getElementById('quote-city').value.trim(),
+        category:     categoryText,
+        service:      document.getElementById('service-detail').value,
+        urgency:      urgencyLabels[document.getElementById('quote-urgency').value] || document.getElementById('quote-urgency').value,
+        message:      document.getElementById('quote-message').value.trim()
+      };
 
-        var quoteNumber = generateQuoteNumber();
-        var createdDate = new Date();
-        var validityDate = new Date(createdDate);
-        validityDate.setDate(validityDate.getDate() + 30);
-
-        var formatDate = function(date) {
-          var d = date.getDate().toString().padStart(2, '0');
-          var m = (date.getMonth() + 1).toString().padStart(2, '0');
-          var y = date.getFullYear();
-          return d + '/' + m + '/' + y;
-        };
-
-        var selectedService = quoteConfig.servicesByCategory[clientData.category]?.find(function(s) {
-          return s.id === clientData.service || s.label === clientData.service;
-        });
-
-        var lineItems = [];
-        lineItems.push({
-          label: 'Diagnostic',
-          description: '',
-          qty: 1,
-          unitPrice: 60,
-          totalHT: 60,
-          tva: 0
-        });
-
-        if (selectedService) {
-          lineItems.push({
-            label: selectedService.label,
-            description: selectedService.description || '',
-            qty: 1,
-            unitPrice: selectedService.price,
-            totalHT: selectedService.price,
-            tva: selectedService.tva || 0
-          });
-        }
-
-        lineItems.push({
-          label: 'Teste de fonctionnement et ajustement finaux',
-          description: '',
-          qty: 1,
-          unitPrice: 30,
-          totalHT: 30,
-          tva: 0
-        });
-
-        lineItems.push({
-          label: 'Frais de déplacement',
-          description: '',
-          qty: 1,
-          unitPrice: 30,
-          totalHT: 30,
-          tva: 0
-        });
-
-        var totalHT = lineItems.reduce(function(sum, item) { return sum + item.totalHT; }, 0);
-        var totalTVA = 0;
-        var totalTTC = totalHT + totalTVA;
-
-        if (clientData.urgency === 'urgent') {
-          totalHT *= 1.5;
-          totalTTC = totalHT;
-        } else if (clientData.urgency === 'rapide') {
-          totalHT *= 1.2;
-          totalTTC = totalHT;
-        }
-
-        var pdfData = {
-          business: businessConfig.company,
-          client: {
-            name: clientData.name,
-            email: clientData.email,
-            phone: clientData.phone,
-            address: clientData.address,
-            postalCode: clientData.postalCode,
-            city: clientData.city
-          },
-          quote: {
-            number: quoteNumber,
-            description: selectedService?.label || 'Intervention de serrurerie',
-            createdDate: formatDate(createdDate),
-            validityDate: formatDate(validityDate),
-            totalHT: totalHT,
-            totalTVA: totalTVA,
-            totalTTC: totalTTC,
-            notes: businessConfig.quote.notes
-          },
-          lineItems: lineItems,
-          includeCGV: true
-        };
-
-        console.log('📄 Generating PDF...');
-        console.log('   Quote number:', quoteNumber);
-        console.log('   Client:', clientData.name);
-        console.log('   Total:', totalTTC + ' €');
-
-        var pdf = generateQuotePDF(pdfData);
-        console.log('✅ PDF generated successfully');
-
-        var pdfBase64 = pdf.output('datauristring').split(',')[1];
-        console.log('✅ PDF converted to base64 (' + pdfBase64.length + ' characters)');
-
-        var supabaseUrl = 'https://0ec90b57d6e95fcbda19832f.supabase.co';
-        var apiEndpoint = supabaseUrl + '/functions/v1/send-quote';
-
-        console.log('📧 Preparing to send email...');
-        console.log('   API Endpoint:', apiEndpoint);
-        console.log('   Environment:', window.location.hostname);
-
-        var timeout = setTimeout(function() {
-          console.error('⏱️ Timeout: Email sending took too long (>15s)');
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+        .then(function () {
+          isSubmitting = false;
+          form.reset();
+          if (serviceSelect) serviceSelect.disabled = true;
+          if (formSuccess) {
+            formSuccess.style.display = 'flex';
+            formSuccess.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = t.btn_submit || originalBtnText;
+          }
+        })
+        .catch(function () {
           isSubmitting = false;
           if (formError) formError.style.display = 'flex';
           if (submitBtn) {
             submitBtn.disabled = false;
-            submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT';
-          }
-        }, 15000);
-
-        console.log('📤 Sending request to:', apiEndpoint);
-
-        var supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJib2x0IiwicmVmIjoiMGVjOTBiNTdkNmU5NWZjYmRhMTk4MzJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4ODE1NzQsImV4cCI6MTc1ODg4MTU3NH0.9I8-U0x86Ak8t2DGaIk0HfvTSLsAyzdnz-Nw00mMkKw';
-
-        fetch(apiEndpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + supabaseAnonKey,
-            'apikey': supabaseAnonKey
-          },
-          body: JSON.stringify({
-            pdfBase64: pdfBase64,
-            quoteData: pdfData.quote,
-            clientData: clientData
-          })
-        })
-        .then(function (response) {
-          clearTimeout(timeout);
-          console.log('📨 Response received:', response.status, response.statusText);
-
-          if (!response.ok) {
-            console.error('❌ HTTP Error:', response.status);
-            throw new Error('HTTP Error: ' + response.status);
-          }
-
-          return response.json();
-        })
-        .then(function(result) {
-          console.log('📊 Result:', result);
-
-          if (result.success) {
-            console.log('✅ Email sent successfully!');
-            isSubmitting = false;
-            form.reset();
-            if (serviceSelect) serviceSelect.disabled = true;
-            if (formSuccess) {
-              formSuccess.style.display = 'flex';
-              formSuccess.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-            if (submitBtn) {
-              submitBtn.disabled = false;
-              submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT';
-            }
-          } else {
-            console.error('❌ Server error:', result.error);
-            isSubmitting = false;
-            throw new Error(result.error || 'Erreur lors de l\'envoi');
-          }
-        })
-        .catch(function (error) {
-          clearTimeout(timeout);
-          isSubmitting = false;
-          console.error('❌ Form submission error:', error);
-          console.error('   Error name:', error.name);
-          console.error('   Error message:', error.message);
-          console.error('   Stack trace:', error.stack);
-
-          if (error.message && error.message.includes('Failed to fetch')) {
-            console.error('💡 Tip: This is normal in local development.');
-            console.error('   The serverless function only works when deployed.');
-            console.error('   PDF generation worked, but email sending requires deployment.');
-          }
-
-          if (formError) {
-            formError.style.display = 'flex';
-            var errorText = formError.querySelector('p');
-            if (errorText && error.message) {
-              errorText.textContent = 'Erreur: ' + error.message;
-            }
-          }
-          if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT';
+            submitBtn.textContent = t.btn_submit || originalBtnText;
           }
         });
-      } catch (error) {
-        isSubmitting = false;
-        console.error('❌ PDF generation error:', error);
-        console.error('   Error name:', error.name);
-        console.error('   Error message:', error.message);
-        console.error('   Stack trace:', error.stack);
-
-        if (formError) {
-          formError.style.display = 'flex';
-          var errorText = formError.querySelector('p');
-          if (errorText && error.message) {
-            errorText.textContent = 'Erreur: ' + error.message;
-          }
-        }
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT';
-        }
-      }
     });
   }
 
