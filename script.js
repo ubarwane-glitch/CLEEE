@@ -887,10 +887,8 @@ document.addEventListener('DOMContentLoaded', function () {
         var pdfBase64 = pdf.output('datauristring').split(',')[1];
         console.log('✅ PDF converted to base64 (' + pdfBase64.length + ' characters)');
 
-        var apiEndpoint = '/.netlify/functions/send-quote';
-        if (window.location.hostname.includes('vercel')) {
-          apiEndpoint = '/api/send-quote';
-        }
+        var supabaseUrl = 'https://0ec90b57d6e95fcbda19832f.supabase.co';
+        var apiEndpoint = supabaseUrl + '/functions/v1/send-quote';
 
         console.log('📧 Preparing to send email...');
         console.log('   API Endpoint:', apiEndpoint);
@@ -908,11 +906,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         console.log('📤 Sending request to:', apiEndpoint);
 
+        var supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJib2x0IiwicmVmIjoiMGVjOTBiNTdkNmU5NWZjYmRhMTk4MzJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4ODE1NzQsImV4cCI6MTc1ODg4MTU3NH0.9I8-U0x86Ak8t2DGaIk0HfvTSLsAyzdnz-Nw00mMkKw';
+
         fetch(apiEndpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Authorization': 'Bearer ' + supabaseAnonKey,
+            'apikey': supabaseAnonKey
           },
           body: JSON.stringify({
             pdfBase64: pdfBase64,
