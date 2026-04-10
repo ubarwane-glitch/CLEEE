@@ -9,37 +9,51 @@ exports.handler = async (event, context) => {
   };
 
   if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 200,
-      headers,
-      body: '',
-    };
+    return { statusCode: 200, headers, body: '' };
   }
 
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
       headers,
-      body: JSON.stringify({ error: 'Method Not Allowed' }),
+      body: JSON.stringify({ success: false, error: 'Method Not Allowed' }),
     };
   }
 
-  console.log('📨 Netlify function - Nouvelle demande de devis');
+  console.log('[SEND-QUOTE] Received request');
 
   try {
-    const { pdfBase64, quoteData, clientData } = JSON.parse(event.body);
+    let body;
+    try {
+      body = JSON.parse(event.body);
+    } catch (parseErr) {
+      console.error('[SEND-QUOTE] Body parse error:', parseErr.message);
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ success: false, error: 'Invalid JSON body' }),
+      };
+    }
 
-    console.log('📧 Client:', clientData?.name);
-    console.log('📄 Devis:', quoteData?.number);
+    const { clientData } = body;
+    console.log('[SEND-QUOTE] Client:', clientData && clientData.name);
 
-    if (!pdfBase64 || !quoteData || !clientData) {
-      console.error('❌ Missing required data');
-      throw new Error('Missing required data: pdfBase64, quoteData, or clientData');
+    if (!clientData || !clientData.name || !clientData.email || !clientData.phone) {
+      console.error('[SEND-QUOTE] Missing required clientData fields');
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ success: false, error: 'Missing required client data' }),
+      };
     }
 
     if (!process.env.RESEND_API_KEY) {
-      console.error('❌ RESEND_API_KEY not configured');
-      throw new Error('RESEND_API_KEY not configured');
+      console.error('[SEND-QUOTE] RESEND_API_KEY not configured');
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ success: false, error: 'Email service not configured' }),
+      };
     }
 
     const resend = new Resend(process.env.RESEND_API_KEY);
@@ -51,7 +65,7 @@ exports.handler = async (event, context) => {
       urgent: 'Urgence immédiate',
       rapide: 'Rapide (sous 24h)',
       normal: 'Standard (sous 48h)',
-    }[clientData.urgency] || clientData.urgency;
+    }[clientData.urgency] || clientData.urgency || 'Non précisé';
 
     const emailHTML = `
       <!DOCTYPE html>
@@ -72,8 +86,7 @@ exports.handler = async (event, context) => {
       <body>
         <div class="container">
           <div class="header">
-            <h1>Nouveau Devis</h1>
-            <p>${quoteData.number}</p>
+            <h1>Nouvelle Demande de Devis</h1>
           </div>
 
           <div class="content">
@@ -92,7 +105,7 @@ exports.handler = async (event, context) => {
             </div>
 
             <div class="info-row">
-              <span class="label">Adresse:</span> ${clientData.address}, ${clientData.postalCode} ${clientData.city}
+              <span class="label">Adresse:</span> ${clientData.address || ''}, ${clientData.postalCode || ''} ${clientData.city || ''}
             </div>
 
             <div class="info-row ${clientData.urgency === 'urgent' ? 'urgent' : ''}">
@@ -102,122 +115,60 @@ exports.handler = async (event, context) => {
             <h2>Demande</h2>
 
             <div class="info-row">
-              <span class="label">Catégorie:</span> ${clientData.category}
+              <span class="label">Catégorie:</span> ${clientData.category || 'Non précisé'}
             </div>
 
             <div class="info-row">
-              <span class="label">Service:</span> ${clientData.service}
+              <span class="label">Service:</span> ${clientData.service || 'Non précisé'}
             </div>
 
             <div class="info-row">
               <span class="label">Description:</span><br>
-              ${clientData.message.replace(/\n/g, '<br>')}
-            </div>
-
-            <h2>Devis</h2>
-
-            <div class="info-row">
-              <span class="label">Total HT:</span> ${quoteData.totalHT.toFixed(2)} €
-            </div>
-
-            <div class="info-row">
-              <span class="label">Total TTC:</span> ${quoteData.totalTTC.toFixed(2)} €
-            </div>
-
-            <div class="info-row">
-              <span class="label">Date de création:</span> ${quoteData.createdDate}
-            </div>
-
-            <div class="info-row">
-              <span class="label">Validité:</span> ${quoteData.validityDate}
+              ${(clientData.message || '').replace(/\n/g, '<br>')}
             </div>
           </div>
 
           <div class="footer">
-            <p>Ce devis a été généré automatiquement.</p>
-            <p>Le PDF est joint à cet email.</p>
+            <p>Cette demande a été soumise via le formulaire en ligne.</p>
           </div>
         </div>
       </body>
       </html>
     `;
 
-    const pdfBuffer = Buffer.from(pdfBase64, 'base64');
+    console.log('[SEND-QUOTE] Sending email to:', toEmail, 'from:', fromEmail);
 
     const { data, error } = await resend.emails.send({
       from: fromEmail,
       to: toEmail,
-      subject: `Nouveau devis - ${clientData.name} - ${quoteData.number}`,
+      subject: `Nouvelle demande de devis - ${clientData.name}`,
       html: emailHTML,
-      attachments: [
-        {
-          filename: `devis-clelim-${quoteData.number}-${clientData.name.replace(/\s+/g, '_')}.pdf`,
-          content: pdfBuffer,
-        },
-      ],
     });
 
     if (error) {
-      console.error('❌ Resend error:', error);
-      throw error;
+      console.error('[SEND-QUOTE] Resend error:', JSON.stringify(error));
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ success: false, error: error.message || 'Email sending failed' }),
+      };
     }
 
-    console.log('✅ Email envoyé avec succès!');
-    console.log('   Email ID:', data?.id);
-
-    if (process.env.SEND_COPY_TO_CLIENT === 'true' && clientData.email) {
-      console.log('📤 Envoi copie au client:', clientData.email);
-
-      await resend.emails.send({
-        from: fromEmail,
-        to: clientData.email,
-        subject: `Votre devis Clelim Serrurerie - ${quoteData.number}`,
-        html: `
-          <!DOCTYPE html>
-          <html>
-          <body style="font-family: Arial, sans-serif; padding: 20px;">
-            <h2>Merci pour votre demande !</h2>
-            <p>Bonjour ${clientData.name},</p>
-            <p>Votre devis a bien été généré. Vous trouverez le document en pièce jointe.</p>
-            <p>Nous vous recontacterons très prochainement pour confirmer votre intervention.</p>
-            <p><strong>Numéro de devis:</strong> ${quoteData.number}</p>
-            <p>Cordialement,<br>L'équipe Clelim Serrurerie</p>
-            <p style="font-size: 12px; color: #666;">
-              📞 ${process.env.BUSINESS_PHONE || '06 77 23 58 39'}<br>
-              ✉️ clelimserrurerie@gmail.com
-            </p>
-          </body>
-          </html>
-        `,
-        attachments: [
-          {
-            filename: `devis-clelim-${quoteData.number}-${clientData.name.replace(/\s+/g, '_')}.pdf`,
-            content: pdfBuffer,
-          },
-        ],
-      });
-    }
+    console.log('[SEND-QUOTE] Email sent successfully, ID:', data && data.id);
 
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({
-        success: true,
-        message: 'Devis envoyé avec succès',
-        emailId: data?.id,
-      }),
+      body: JSON.stringify({ success: true }),
     };
   } catch (error) {
-    console.error('❌ Error sending quote:', error.message);
-    console.error('Stack trace:', error.stack);
+    console.error('[SEND-QUOTE] Unexpected error:', error.message);
+    console.error('[SEND-QUOTE] Stack:', error.stack);
 
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({
-        success: false,
-        error: error.message || 'Erreur lors de l\'envoi du devis',
-      }),
+      body: JSON.stringify({ success: false, error: error.message || 'Unexpected server error' }),
     };
   }
 };

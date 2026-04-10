@@ -704,7 +704,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // -------------------------------------------------------
-  // 6. FORM SUBMISSION (Production-ready)
+  // 6. FORM SUBMISSION
   // -------------------------------------------------------
   var form        = document.getElementById('quote-form');
   var formSuccess = document.getElementById('form-success');
@@ -717,13 +717,15 @@ document.addEventListener('DOMContentLoaded', function () {
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 
+      console.log('[FORM] Submit triggered');
+
       if (isSubmitting) {
-        console.log('⚠️ Form already submitting, ignoring duplicate submit');
+        console.log('[FORM] Already submitting, ignoring duplicate');
         return;
       }
 
       if (honeypot && honeypot.value !== '') {
-        console.log('🤖 Honeypot triggered, ignoring spam');
+        console.log('[FORM] Honeypot triggered, ignoring');
         return;
       }
 
@@ -741,263 +743,94 @@ document.addEventListener('DOMContentLoaded', function () {
       if (formSuccess) formSuccess.style.display = 'none';
       if (formError)   formError.style.display   = 'none';
 
-      console.log('🔍 Form submitted - Checking dependencies...');
-      console.log('   businessConfig:', typeof businessConfig !== 'undefined' ? '✅ LOADED' : '❌ MISSING');
-      console.log('   quoteConfig:', typeof quoteConfig !== 'undefined' ? '✅ LOADED' : '❌ MISSING');
-      console.log('   generateQuoteNumber:', typeof generateQuoteNumber !== 'undefined' ? '✅ LOADED' : '❌ MISSING');
-      console.log('   generateQuotePDF:', typeof generateQuotePDF !== 'undefined' ? '✅ LOADED' : '❌ MISSING');
-      console.log('   jsPDF:', typeof window.jspdf !== 'undefined' && window.jspdf.jsPDF ? '✅ LOADED' : '❌ MISSING');
-
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = '⏳ Envoi en cours...';
+        submitBtn.textContent = 'Envoi en cours...';
       }
 
       var clientData = {
-        name:     document.getElementById('quote-name')?.value.trim() || '',
-        phone:    document.getElementById('quote-phone')?.value.trim() || '',
-        email:    document.getElementById('quote-email')?.value.trim() || '',
-        address:  document.getElementById('quote-address')?.value.trim() || '',
-        postalCode: document.getElementById('quote-postal')?.value.trim() || '',
-        city:     document.getElementById('quote-city')?.value.trim() || '',
-        category: document.getElementById('service-category')?.value || '',
-        service:  document.getElementById('service-detail')?.value || '',
-        urgency:  document.getElementById('quote-urgency')?.value || 'normal',
-        message:  document.getElementById('quote-message')?.value.trim() || '',
+        name:       (document.getElementById('quote-name') || {}).value ? document.getElementById('quote-name').value.trim() : '',
+        phone:      (document.getElementById('quote-phone') || {}).value ? document.getElementById('quote-phone').value.trim() : '',
+        email:      (document.getElementById('quote-email') || {}).value ? document.getElementById('quote-email').value.trim() : '',
+        address:    (document.getElementById('quote-address') || {}).value ? document.getElementById('quote-address').value.trim() : '',
+        postalCode: (document.getElementById('quote-postal') || {}).value ? document.getElementById('quote-postal').value.trim() : '',
+        city:       (document.getElementById('quote-city') || {}).value ? document.getElementById('quote-city').value.trim() : '',
+        category:   (document.getElementById('service-category') || {}).value || '',
+        service:    (document.getElementById('service-detail') || {}).value || '',
+        urgency:    (document.getElementById('quote-urgency') || {}).value || 'normal',
+        message:    (document.getElementById('quote-message') || {}).value ? document.getElementById('quote-message').value.trim() : '',
       };
 
-      try {
-        if (typeof generateQuoteNumber === 'undefined') {
-          throw new Error('generateQuoteNumber function not loaded');
-        }
-        if (typeof generateQuotePDF === 'undefined') {
-          throw new Error('generateQuotePDF function not loaded');
-        }
-        if (typeof businessConfig === 'undefined') {
-          throw new Error('businessConfig not loaded');
-        }
-        if (typeof quoteConfig === 'undefined') {
-          throw new Error('quoteConfig not loaded');
-        }
-        if (typeof window.jspdf === 'undefined' || !window.jspdf.jsPDF) {
-          throw new Error('jsPDF library not loaded');
-        }
+      console.log('[FORM] Payload built for:', clientData.name, '|', clientData.email);
 
-        console.log('✅ All dependencies loaded, generating quote...');
+      var apiEndpoint = '/.netlify/functions/send-quote';
+      console.log('[FORM] Sending request to:', apiEndpoint, '| Host:', window.location.hostname);
 
-        var quoteNumber = generateQuoteNumber();
-        var createdDate = new Date();
-        var validityDate = new Date(createdDate);
-        validityDate.setDate(validityDate.getDate() + 30);
-
-        var formatDate = function(date) {
-          var d = date.getDate().toString().padStart(2, '0');
-          var m = (date.getMonth() + 1).toString().padStart(2, '0');
-          var y = date.getFullYear();
-          return d + '/' + m + '/' + y;
-        };
-
-        var selectedService = quoteConfig.servicesByCategory[clientData.category]?.find(function(s) {
-          return s.id === clientData.service || s.label === clientData.service;
-        });
-
-        var lineItems = [];
-        lineItems.push({
-          label: 'Diagnostic',
-          description: '',
-          qty: 1,
-          unitPrice: 60,
-          totalHT: 60,
-          tva: 0
-        });
-
-        if (selectedService) {
-          lineItems.push({
-            label: selectedService.label,
-            description: selectedService.description || '',
-            qty: 1,
-            unitPrice: selectedService.price,
-            totalHT: selectedService.price,
-            tva: selectedService.tva || 0
-          });
-        }
-
-        lineItems.push({
-          label: 'Teste de fonctionnement et ajustement finaux',
-          description: '',
-          qty: 1,
-          unitPrice: 30,
-          totalHT: 30,
-          tva: 0
-        });
-
-        lineItems.push({
-          label: 'Frais de déplacement',
-          description: '',
-          qty: 1,
-          unitPrice: 30,
-          totalHT: 30,
-          tva: 0
-        });
-
-        var totalHT = lineItems.reduce(function(sum, item) { return sum + item.totalHT; }, 0);
-        var totalTVA = 0;
-        var totalTTC = totalHT + totalTVA;
-
-        if (clientData.urgency === 'urgent') {
-          totalHT *= 1.5;
-          totalTTC = totalHT;
-        } else if (clientData.urgency === 'rapide') {
-          totalHT *= 1.2;
-          totalTTC = totalHT;
-        }
-
-        var pdfData = {
-          business: businessConfig.company,
-          client: {
-            name: clientData.name,
-            email: clientData.email,
-            phone: clientData.phone,
-            address: clientData.address,
-            postalCode: clientData.postalCode,
-            city: clientData.city
-          },
-          quote: {
-            number: quoteNumber,
-            description: selectedService?.label || 'Intervention de serrurerie',
-            createdDate: formatDate(createdDate),
-            validityDate: formatDate(validityDate),
-            totalHT: totalHT,
-            totalTVA: totalTVA,
-            totalTTC: totalTTC,
-            notes: businessConfig.quote.notes
-          },
-          lineItems: lineItems,
-          includeCGV: true
-        };
-
-        console.log('📄 Generating PDF...');
-        console.log('   Quote number:', quoteNumber);
-        console.log('   Client:', clientData.name);
-        console.log('   Total:', totalTTC + ' €');
-
-        var pdf = generateQuotePDF(pdfData);
-        console.log('✅ PDF generated successfully');
-
-        var pdfBase64 = pdf.output('datauristring').split(',')[1];
-        console.log('✅ PDF converted to base64 (' + pdfBase64.length + ' characters)');
-
-        var apiEndpoint = '/.netlify/functions/send-quote';
-        if (window.location.hostname.includes('vercel')) {
-          apiEndpoint = '/api/send-quote';
-        }
-
-        console.log('📧 Preparing to send email...');
-        console.log('   API Endpoint:', apiEndpoint);
-        console.log('   Environment:', window.location.hostname);
-
-        var timeout = setTimeout(function() {
-          console.error('⏱️ Timeout: Email sending took too long (>15s)');
-          isSubmitting = false;
-          if (formError) formError.style.display = 'flex';
-          if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT';
-          }
-        }, 15000);
-
-        console.log('📤 Sending request to:', apiEndpoint);
-
-        fetch(apiEndpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({
-            pdfBase64: pdfBase64,
-            quoteData: pdfData.quote,
-            clientData: clientData
-          })
-        })
-        .then(function (response) {
-          clearTimeout(timeout);
-          console.log('📨 Response received:', response.status, response.statusText);
-
-          if (!response.ok) {
-            console.error('❌ HTTP Error:', response.status);
-            throw new Error('HTTP Error: ' + response.status);
-          }
-
-          return response.json();
-        })
-        .then(function(result) {
-          console.log('📊 Result:', result);
-
-          if (result.success) {
-            console.log('✅ Email sent successfully!');
-            isSubmitting = false;
-            form.reset();
-            if (serviceSelect) serviceSelect.disabled = true;
-            if (formSuccess) {
-              formSuccess.style.display = 'flex';
-              formSuccess.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-            if (submitBtn) {
-              submitBtn.disabled = false;
-              submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT';
-            }
-          } else {
-            console.error('❌ Server error:', result.error);
-            isSubmitting = false;
-            throw new Error(result.error || 'Erreur lors de l\'envoi');
-          }
-        })
-        .catch(function (error) {
-          clearTimeout(timeout);
-          isSubmitting = false;
-          console.error('❌ Form submission error:', error);
-          console.error('   Error name:', error.name);
-          console.error('   Error message:', error.message);
-          console.error('   Stack trace:', error.stack);
-
-          if (error.message && error.message.includes('Failed to fetch')) {
-            console.error('💡 Tip: This is normal in local development.');
-            console.error('   The serverless function only works when deployed.');
-            console.error('   PDF generation worked, but email sending requires deployment.');
-          }
-
-          if (formError) {
-            formError.style.display = 'flex';
-            var errorText = formError.querySelector('p');
-            if (errorText && error.message) {
-              errorText.textContent = 'Erreur: ' + error.message;
-            }
-          }
-          if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT';
-          }
-        });
-      } catch (error) {
-        isSubmitting = false;
-        console.error('❌ PDF generation error:', error);
-        console.error('   Error name:', error.name);
-        console.error('   Error message:', error.message);
-        console.error('   Stack trace:', error.stack);
-
-        if (formError) {
-          formError.style.display = 'flex';
-          var errorText = formError.querySelector('p');
-          if (errorText && error.message) {
-            errorText.textContent = 'Erreur: ' + error.message;
-          }
-        }
+      var resetBtn = function () {
         if (submitBtn) {
           submitBtn.disabled = false;
           submitBtn.textContent = t.btn_submit || 'OBTENIR MON DEVIS GRATUIT';
         }
-      }
+        isSubmitting = false;
+      };
+
+      var timeout = setTimeout(function () {
+        console.error('[FORM] Timeout: no response after 20s');
+        resetBtn();
+        if (formError) formError.style.display = 'flex';
+      }, 20000);
+
+      fetch(apiEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ clientData: clientData })
+      })
+      .then(function (response) {
+        clearTimeout(timeout);
+        console.log('[FORM] Response status:', response.status, response.statusText);
+
+        if (!response.ok) {
+          console.error('[FORM] HTTP error:', response.status);
+          resetBtn();
+          if (formError) formError.style.display = 'flex';
+          return;
+        }
+
+        return response.text().then(function (text) {
+          console.log('[FORM] Response body:', text);
+          var result;
+          try {
+            result = JSON.parse(text);
+          } catch (parseErr) {
+            console.error('[FORM] JSON parse error:', parseErr.message, '| Raw:', text);
+            result = { success: true };
+          }
+
+          if (result && result.success === false) {
+            console.error('[FORM] Server returned success:false —', result.error);
+            resetBtn();
+            if (formError) formError.style.display = 'flex';
+          } else {
+            console.log('[FORM] Success confirmed');
+            form.reset();
+            if (serviceSelect) serviceSelect.disabled = true;
+            resetBtn();
+            if (formSuccess) {
+              formSuccess.style.display = 'flex';
+              formSuccess.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+          }
+        });
+      })
+      .catch(function (error) {
+        clearTimeout(timeout);
+        console.error('[FORM] Fetch error:', error.name, '|', error.message);
+        resetBtn();
+        if (formError) formError.style.display = 'flex';
+      });
     });
   }
 
